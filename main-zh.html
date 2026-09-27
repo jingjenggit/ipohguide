@@ -262,6 +262,8 @@
   .photo.hero-photo { aspect-ratio: 4 / 5; border-radius: 14px; box-shadow: var(--shadow); }
   .photo.card-photo { aspect-ratio: 4 / 3; }
   .photo.food-photo { aspect-ratio: 1 / 1; }
+  img.hero-photo { display: block; width: 100%; aspect-ratio: 1000 / 612; object-fit: cover; border-radius: 14px; box-shadow: var(--shadow); }
+  img.card-photo { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
 
   /* ---------- sections ---------- */
   section { padding: clamp(3rem, 7vw, 5rem) 0; }
@@ -579,10 +581,7 @@
     </div>
     <div class="hero-photo-wrap">
       <div class="stamp">怡保<br>马来西亚<br>旅游指南</div>
-      <div class="photo hero-photo">
-        <svg><use href="#icon-camera"/></svg>
-        <span>封面照片：<br><span class="fill">[例如：黄金时刻的石灰岩山]</span></span>
-      </div>
+      <img class="hero-photo" src="images/ipoh_main.jpg" alt="怡保黄昏空拍景色，石灰岩山环绕市区，山坡上立着 IPOH 招牌">
     </div>
   </div>
 </header>
@@ -617,10 +616,7 @@
 
     <div class="grid-3">
       <article class="place-card">
-        <div class="photo card-photo">
-          <svg><use href="#icon-camera"/></svg>
-          <span>二奶巷照片</span>
-        </div>
+        <img class="card-photo" src="images/ConcubineLanes.jpeg" alt="二奶巷，怡保老城区里挂满红灯笼的窄巷">
         <div class="place-body">
           <span class="tag">巷弄</span>
           <h3>二奶巷 (Second &amp; Third Concubine Lane)</h3>
@@ -632,10 +628,7 @@
       </article>
 
       <article class="place-card">
-        <div class="photo card-photo">
-          <svg><use href="#icon-camera"/></svg>
-          <span>怡保壁画照片</span>
-        </div>
+        <img class="card-photo" src="images/mural2.jpg" alt="怡保街头壁画，画中女子头戴鲜花，手持茶杯">
         <div class="place-body">
           <span class="tag">街头艺术</span>
           <h3>怡保壁画 (Ipoh Mural)</h3>
@@ -692,10 +685,7 @@
 
     <div class="grid-3">
       <article class="place-card">
-        <div class="photo card-photo">
-          <svg><use href="#icon-camera"/></svg>
-          <span>Gunung Lang 照片</span>
-        </div>
+        <img class="card-photo" src="images/gunang_lang.jpg" alt="Gunung Lang 休闲公园，湖泊四周环绕石灰岩山">
         <div class="place-body">
           <span class="tag">自然景观</span>
           <h3>Gunung Lang Recreational Park</h3>
@@ -707,10 +697,7 @@
       </article>
 
       <article class="place-card">
-        <div class="photo card-photo">
-          <svg><use href="#icon-camera"/></svg>
-          <span>Perak Cave Temple 照片</span>
-        </div>
+        <img class="card-photo" src="images/perak_cave_temple.webp" alt="建于石灰岩山壁上的 Perak Cave Temple">
         <div class="place-body">
           <span class="tag">Cave temple</span>
           <h3>Perak Cave Temple</h3>
@@ -719,10 +706,7 @@
       </article>
 
       <article class="place-card">
-        <div class="photo card-photo">
-          <svg><use href="#icon-camera"/></svg>
-          <span>Kledang Hill 照片</span>
-        </div>
+        <img class="card-photo" src="images/kledang_hill.jpg" alt="从 Kledang Hill 眺望的景色">
         <div class="place-body">
           <span class="tag">登山</span>
           <h3>Kledang Hill</h3>
@@ -734,10 +718,7 @@
       </article>
 
       <article class="place-card">
-        <div class="photo card-photo">
-          <svg><use href="#icon-camera"/></svg>
-          <span>三宝洞 (Sam Poh Tong Temple) 照片</span>
-        </div>
+        <img class="card-photo" src="images/Sam_poh_tong_temple.jpg" alt="三宝洞，附设中式花园的洞穴庙宇">
         <div class="place-body">
           <span class="tag">Cave temple</span>
           <h3>三宝洞 (Sam Poh Tong Temple)</h3>
@@ -746,10 +727,7 @@
       </article>
 
       <article class="place-card">
-        <div class="photo card-photo">
-          <svg><use href="#icon-camera"/></svg>
-          <span>Tasik Cermin 照片</span>
-        </div>
+        <img class="card-photo" src="images/tasik_cermin.jpg" alt="Tasik Cermin，石灰岩峭壁下如镜面般平静的湖水">
         <div class="place-body">
           <span class="tag">公园</span>
           <h3>Tasik Cermin</h3>
@@ -761,10 +739,7 @@
       </article>
 
       <article class="place-card">
-        <div class="photo card-photo">
-          <svg><use href="#icon-camera"/></svg>
-          <span>Tasik Cermin 2 照片</span>
-        </div>
+        <img class="card-photo" src="images/tasik_cermin_2.jpeg" alt="Tasik Cermin 2，可攀岩或搭船游览洞穴">
         <div class="place-body">
           <span class="tag">冒险活动</span>
           <h3>Tasik Cermin 2</h3>
@@ -772,6 +747,15 @@
           <div class="place-meta">
             <span>最佳时间：清晨，避开炎热与人群</span>
           </div>
+        </div>
+      </article>
+
+      <article class="place-card">
+        <img class="card-photo" src="images/kek-lok-tong-temple.jpg" alt="极乐洞，附设中式花园和锦鲤池的洞穴庙宇">
+        <div class="place-body">
+          <span class="tag">洞穴庙宇</span>
+          <h3>极乐洞 (Kek Lok Tong Temple)</h3>
+          <p>一座大型洞穴庙宇，附设中式花园和锦鲤池，后方还有一条通往竹林的步行隧道。</p>
         </div>
       </article>
       <!-- duplicate .place-card as needed -->
@@ -791,10 +775,7 @@
 
     <div class="grid-3">
       <article class="place-card">
-        <div class="photo card-photo">
-          <svg><use href="#icon-camera"/></svg>
-          <span>Sunway Lost World Hot Spring 照片</span>
-        </div>
+        <img class="card-photo" src="images/Lost_world_hot_springs.jpg" alt="夜晚的双威失落的世界温泉">
         <div class="place-body">
           <span class="tag">温泉</span>
           <h3>Sunway Lost World Hot Spring &amp; Night Park</h3>
@@ -806,10 +787,7 @@
       </article>
 
       <article class="place-card">
-        <div class="photo card-photo">
-          <svg><use href="#icon-camera"/></svg>
-          <span>Lost World of Tambun 照片</span>
-        </div>
+        <img class="card-photo" src="images/Lost_world_park.jpg" alt="Lost World of Tambun 主题乐园">
         <div class="place-body">
           <span class="tag">主题公园</span>
           <h3>Lost World of Tambun</h3>
@@ -821,10 +799,7 @@
       </article>
 
       <article class="place-card">
-        <div class="photo card-photo">
-          <svg><use href="#icon-camera"/></svg>
-          <span>金马仑高原 (Cameron Highlands) 照片</span>
-        </div>
+        <img class="card-photo" src="images/cameron-highlands-flora-park.jpeg" alt="金马仑高原的花卉公园">
         <div class="place-body">
           <span class="tag">全天行程</span>
           <h3>金马仑高原 (Cameron Highlands)</h3>
@@ -833,14 +808,20 @@
       </article>
 
       <article class="place-card">
-        <div class="photo card-photo">
-          <svg><use href="#icon-camera"/></svg>
-          <span>Kellie's Castle 照片</span>
-        </div>
+        <img class="card-photo" src="images/kellie_castle.jpeg" alt="Kellie's Castle，一位苏格兰籍种植园主建造的百年古堡">
         <div class="place-body">
           <span class="tag">历史古迹</span>
           <h3>Kellie's Castle</h3>
           <p>一座约百年历史的古老城堡，由一位苏格兰籍主人建造，车程需数小时。</p>
+        </div>
+      </article>
+
+      <article class="place-card">
+        <img class="card-photo" src="images/hobbiton_cameron.jpg" alt="Hobbiton Village Perak，依山而建的哈比屯造型小屋">
+        <div class="place-body">
+          <span class="tag">趣味景点</span>
+          <h3>Hobbiton Village Perak</h3>
+          <p>仿照电影《魔戒》哈比屯场景打造的复制村庄，距离怡保约一小时车程。</p>
         </div>
       </article>
       <!-- duplicate .place-card as needed -->

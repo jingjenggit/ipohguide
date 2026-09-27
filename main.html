@@ -262,6 +262,8 @@
   .photo.hero-photo { aspect-ratio: 4 / 5; border-radius: 14px; box-shadow: var(--shadow); }
   .photo.card-photo { aspect-ratio: 4 / 3; }
   .photo.food-photo { aspect-ratio: 1 / 1; }
+  img.hero-photo { display: block; width: 100%; aspect-ratio: 1000 / 612; object-fit: cover; border-radius: 14px; box-shadow: var(--shadow); }
+  img.card-photo { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
 
   /* ---------- sections ---------- */
   section { padding: clamp(3rem, 7vw, 5rem) 0; }
@@ -579,10 +581,7 @@
     </div>
     <div class="hero-photo-wrap">
       <div class="stamp">Ipoh<br>Malaysia<br>est. guide</div>
-      <div class="photo hero-photo">
-        <svg><use href="#icon-camera"/></svg>
-        <span>Hero photo:<br><span class="fill">[e.g. limestone hills at golden hour]</span></span>
-      </div>
+      <img class="hero-photo" src="images/ipoh_main.jpg" alt="Aerial view of Ipoh at sunset, limestone hills ringing the city with the IPOH hillside sign in the foreground">
     </div>
   </div>
 </header>
@@ -617,10 +616,7 @@
 
     <div class="grid-3">
       <article class="place-card">
-        <div class="photo card-photo">
-          <svg><use href="#icon-camera"/></svg>
-          <span>Photo of Concubine Lane</span>
-        </div>
+        <img class="card-photo" src="images/ConcubineLanes.jpeg" alt="Concubine Lane, a narrow shophouse alley in Ipoh's Old Town strung with red lanterns">
         <div class="place-body">
           <span class="tag">Laneways</span>
           <h3>Second &amp; Third Concubine Lane</h3>
@@ -632,10 +628,7 @@
       </article>
 
       <article class="place-card">
-        <div class="photo card-photo">
-          <svg><use href="#icon-camera"/></svg>
-          <span>Photo of the Ipoh murals</span>
-        </div>
+        <img class="card-photo" src="images/mural2.jpg" alt="A colourful street mural in Ipoh of a woman with floral hair holding a teacup">
         <div class="place-body">
           <span class="tag">Street art</span>
           <h3>Ipoh Mural</h3>
@@ -692,10 +685,7 @@
 
     <div class="grid-3">
       <article class="place-card">
-        <div class="photo card-photo">
-          <svg><use href="#icon-camera"/></svg>
-          <span>Photo of Gunung Lang</span>
-        </div>
+        <img class="card-photo" src="images/gunang_lang.jpg" alt="Gunung Lang Recreational Park, a lake ringed by limestone hills">
         <div class="place-body">
           <span class="tag">Nature</span>
           <h3>Gunung Lang Recreational Park</h3>
@@ -707,10 +697,7 @@
       </article>
 
       <article class="place-card">
-        <div class="photo card-photo">
-          <svg><use href="#icon-camera"/></svg>
-          <span>Photo of Perak Cave Temple</span>
-        </div>
+        <img class="card-photo" src="images/perak_cave_temple.webp" alt="Perak Cave Temple built into a limestone hillside">
         <div class="place-body">
           <span class="tag">Cave temple</span>
           <h3>Perak Cave Temple</h3>
@@ -719,10 +706,7 @@
       </article>
 
       <article class="place-card">
-        <div class="photo card-photo">
-          <svg><use href="#icon-camera"/></svg>
-          <span>Photo of Kledang Hill</span>
-        </div>
+        <img class="card-photo" src="images/kledang_hill.jpg" alt="View from Kledang Hill">
         <div class="place-body">
           <span class="tag">Hike</span>
           <h3>Kledang Hill</h3>
@@ -734,10 +718,7 @@
       </article>
 
       <article class="place-card">
-        <div class="photo card-photo">
-          <svg><use href="#icon-camera"/></svg>
-          <span>Photo of Sam Poh Tong Temple</span>
-        </div>
+        <img class="card-photo" src="images/Sam_poh_tong_temple.jpg" alt="Sam Poh Tong Temple, a cave temple with a Chinese garden">
         <div class="place-body">
           <span class="tag">Cave temple</span>
           <h3>Sam Poh Tong Temple</h3>
@@ -746,10 +727,7 @@
       </article>
 
       <article class="place-card">
-        <div class="photo card-photo">
-          <svg><use href="#icon-camera"/></svg>
-          <span>Photo of Tasik Cermin</span>
-        </div>
+        <img class="card-photo" src="images/tasik_cermin.jpg" alt="Tasik Cermin, a mirror-like lake at the base of a limestone cliff">
         <div class="place-body">
           <span class="tag">Park</span>
           <h3>Tasik Cermin</h3>
@@ -761,10 +739,7 @@
       </article>
 
       <article class="place-card">
-        <div class="photo card-photo">
-          <svg><use href="#icon-camera"/></svg>
-          <span>Photo of Tasik Cermin 2</span>
-        </div>
+        <img class="card-photo" src="images/tasik_cermin_2.jpeg" alt="Tasik Cermin 2, with rock climbing and boat tours through the cave">
         <div class="place-body">
           <span class="tag">Adventure</span>
           <h3>Tasik Cermin 2</h3>
@@ -772,6 +747,15 @@
           <div class="place-meta">
             <span>Best time: Early morning, avoids the heat and the crowds</span>
           </div>
+        </div>
+      </article>
+
+      <article class="place-card">
+        <img class="card-photo" src="images/kek-lok-tong-temple.jpg" alt="Kek Lok Tong Temple, a cave temple with a Chinese garden and koi ponds">
+        <div class="place-body">
+          <span class="tag">Cave temple</span>
+          <h3>Kek Lok Tong Temple</h3>
+          <p>A large cave temple with a Chinese garden, koi ponds, and a walk-through tunnel to a bamboo grove out back.</p>
         </div>
       </article>
       <!-- duplicate .place-card as needed -->
@@ -791,10 +775,7 @@
 
     <div class="grid-3">
       <article class="place-card">
-        <div class="photo card-photo">
-          <svg><use href="#icon-camera"/></svg>
-          <span>Photo of Sunway Lost World Hot Spring</span>
-        </div>
+        <img class="card-photo" src="images/Lost_world_hot_springs.jpg" alt="Sunway Lost World Hot Spring at night">
         <div class="place-body">
           <span class="tag">Hot springs</span>
           <h3>Sunway Lost World Hot Spring &amp; Night Park</h3>
@@ -806,10 +787,7 @@
       </article>
 
       <article class="place-card">
-        <div class="photo card-photo">
-          <svg><use href="#icon-camera"/></svg>
-          <span>Photo of Lost World of Tambun</span>
-        </div>
+        <img class="card-photo" src="images/Lost_world_park.jpg" alt="Lost World of Tambun theme park">
         <div class="place-body">
           <span class="tag">Theme park</span>
           <h3>Lost World of Tambun</h3>
@@ -821,10 +799,7 @@
       </article>
 
       <article class="place-card">
-        <div class="photo card-photo">
-          <svg><use href="#icon-camera"/></svg>
-          <span>Photo of Cameron Highlands</span>
-        </div>
+        <img class="card-photo" src="images/cameron-highlands-flora-park.jpeg" alt="A flower garden in Cameron Highlands">
         <div class="place-body">
           <span class="tag">Full-day trip</span>
           <h3>Cameron Highlands</h3>
@@ -833,14 +808,20 @@
       </article>
 
       <article class="place-card">
-        <div class="photo card-photo">
-          <svg><use href="#icon-camera"/></svg>
-          <span>Photo of Kellie's Castle</span>
-        </div>
+        <img class="card-photo" src="images/kellie_castle.jpeg" alt="Kellie's Castle, a century-old mansion built by a Scottish planter">
         <div class="place-body">
           <span class="tag">Historic</span>
           <h3>Kellie's Castle</h3>
           <p>A very old castle built about a hundred years ago by a Scottish owner, a few hours' drive out.</p>
+        </div>
+      </article>
+
+      <article class="place-card">
+        <img class="card-photo" src="images/hobbiton_cameron.jpg" alt="Hobbiton Village Perak, a hobbit-hole replica set into a grassy hillside">
+        <div class="place-body">
+          <span class="tag">Novelty</span>
+          <h3>Hobbiton Village Perak</h3>
+          <p>A replica of the Hobbiton movie set from Lord of the Rings, about an hour's drive from Ipoh.</p>
         </div>
       </article>
       <!-- duplicate .place-card as needed -->
