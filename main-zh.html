@@ -431,6 +431,68 @@
   .buy-feature p { margin: 0; color: var(--ink-soft); font-size: .95rem; }
   .buy-more { max-width: 640px; margin: 0 auto; }
 
+  /* ---------- food carousel ---------- */
+  .food-carousel {
+    position: relative;
+    width: 76px;
+    height: 76px;
+    flex: none;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+  }
+  .food-carousel img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+  .food-carousel img.fc-active { opacity: 1; }
+  .fc-btn {
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 22px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 15px;
+    font-weight: 700;
+    padding: 0;
+    z-index: 2;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.7);
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+  .food-carousel:hover .fc-btn,
+  .food-carousel:focus-within .fc-btn { opacity: 1; }
+  .fc-btn.fc-prev { left: 0; background: linear-gradient(to right, rgba(0,0,0,0.28), transparent); }
+  .fc-btn.fc-next { right: 0; background: linear-gradient(to left, rgba(0,0,0,0.28), transparent); }
+  .fc-dots {
+    position: absolute;
+    bottom: 5px;
+    left: 0; right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 3px;
+    z-index: 2;
+    pointer-events: none;
+  }
+  .fc-dot {
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.45);
+    transition: background 0.2s;
+  }
+  .fc-dot.fc-active { background: white; }
+
   /* ---------- itinerary ---------- */
   .itin-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.75rem; }
   @media (max-width: 900px) { .itin-grid { grid-template-columns: repeat(2, 1fr); } }
@@ -639,35 +701,6 @@
         </div>
       </article>
 
-      <article class="place-card">
-        <div class="photo card-photo">
-          <svg><use href="#icon-camera"/></svg>
-          <span>Ipoh Upside Down World 照片</span>
-        </div>
-        <div class="place-body">
-          <span class="tag">趣味景点</span>
-          <h3>Ipoh Upside Down World</h3>
-          <p>类似槟城的同类景点。若已在二奶巷附近可顺道参观。</p>
-          <div class="place-meta">
-            <span>费用：<span class="fill">[请确认]</span></span>
-          </div>
-        </div>
-      </article>
-
-      <article class="place-card">
-        <div class="photo card-photo">
-          <svg><use href="#icon-camera"/></svg>
-          <span>Han Chin Pet Soo 照片</span>
-        </div>
-        <div class="place-body">
-          <span class="tag">博物馆</span>
-          <h3>Han Chin Pet Soo</h3>
-          <p>一座小型历史博物馆。若人在附近（二奶巷）可顺道参观。</p>
-          <div class="place-meta">
-            <span>费用：<span class="fill">[请确认]</span></span>
-          </div>
-        </div>
-      </article>
       <!-- duplicate .place-card as needed -->
     </div>
   </div>
@@ -846,22 +879,19 @@
       </div>
       <div class="food-row">
         <div class="food-card">
-          <div class="photo food-photo"><svg><use href="#icon-camera"/></svg></div>
+          <img class="food-photo" src="images/food_ming_court.jpeg" alt="Ming Court Hong Kong Dimsum">
           <div>
+            <span class="rating" aria-label="4 out of 5">
+              <svg><use href="#icon-star"/></svg><svg><use href="#icon-star"/></svg><svg><use href="#icon-star"/></svg><svg><use href="#icon-star"/></svg>
+            </span>
             <h4>Ming Court Hong Kong Dimsum</h4>
             <p>要早起去吃：道地的港式点心。</p>
           </div>
         </div>
         <div class="food-card">
-          <div class="photo food-photo"><svg><use href="#icon-camera"/></svg></div>
+          <img class="food-photo" src="images/food_yum_cha.jpg" alt="Yum Cha House Dim Sum">
           <div>
-            <h4>Restoran Zhen Hi Hao</h4>
-            <p>另一间不错的点心店。</p>
-          </div>
-        </div>
-        <div class="food-card">
-          <div class="photo food-photo"><svg><use href="#icon-camera"/></svg></div>
-          <div>
+            <span class="tag recommended"><svg><use href="#icon-star"/></svg>推荐</span>
             <span class="rating" aria-label="4 out of 5">
               <svg><use href="#icon-star"/></svg><svg><use href="#icon-star"/></svg><svg><use href="#icon-star"/></svg><svg><use href="#icon-star"/></svg>
             </span>
@@ -870,14 +900,25 @@
           </div>
         </div>
         <div class="food-card">
-          <div class="photo food-photo"><svg><use href="#icon-camera"/></svg></div>
+          <img class="food-photo" src="images/food_nam_heong.jpg" alt="Kedai Makanan Nam Heong">
           <div>
             <h4>Kedai Makanan Nam Heong</h4>
             <p>以白咖啡闻名，食物本身还算普通。</p>
           </div>
         </div>
         <div class="food-card">
-          <div class="photo food-photo"><svg><use href="#icon-camera"/></svg></div>
+          <div class="food-carousel">
+            <img src="images/food_kin_loong_1.jpg" alt="Kin Loong Valley Chang Jiang White Coffee" class="fc-active">
+            <img src="images/food_kin_loong_2.jpeg" alt="Kin Loong Valley Chang Jiang White Coffee">
+            <img src="images/food_kin_loong_3.jpeg" alt="Kin Loong Valley Chang Jiang White Coffee">
+            <button class="fc-btn fc-prev" aria-label="上一张">&#8249;</button>
+            <button class="fc-btn fc-next" aria-label="下一张">&#8250;</button>
+            <div class="fc-dots">
+              <span class="fc-dot fc-active"></span>
+              <span class="fc-dot"></span>
+              <span class="fc-dot"></span>
+            </div>
+          </div>
           <div>
             <span class="rating" aria-label="3 out of 5">
               <svg><use href="#icon-star"/></svg><svg><use href="#icon-star"/></svg><svg><use href="#icon-star"/></svg>
@@ -887,24 +928,44 @@
           </div>
         </div>
         <div class="food-card">
-          <div class="photo food-photo"><svg><use href="#icon-camera"/></svg></div>
+          <img class="food-photo" src="images/food_moon_de_moon.webp" alt="Restoran Moon De Moon">
           <div>
-            <h4>Patisserie Boutique</h4>
-            <p>适合喝咖啡休息一下的不错咖啡馆。</p>
-          </div>
-        </div>
-        <div class="food-card">
-          <div class="photo food-photo"><svg><use href="#icon-camera"/></svg></div>
-          <div>
+            <span class="tag recommended"><svg><use href="#icon-star"/></svg>推荐</span>
+            <span class="rating" aria-label="4 out of 5">
+              <svg><use href="#icon-star"/></svg><svg><use href="#icon-star"/></svg><svg><use href="#icon-star"/></svg><svg><use href="#icon-star"/></svg>
+            </span>
             <h4>Restoran Moon De Moon</h4>
             <p>以鸡肉河粉闻名。</p>
           </div>
         </div>
         <div class="food-card">
-          <div class="photo food-photo"><svg><use href="#icon-camera"/></svg></div>
+          <div class="food-carousel">
+            <img src="images/food_dong_tai_1.jpeg" alt="Dong Tai Kopitiam" class="fc-active">
+            <img src="images/food_dong_tai_2.jpeg" alt="Dong Tai Kopitiam">
+            <img src="images/food_dong_tai_3.jpeg" alt="Dong Tai Kopitiam">
+            <button class="fc-btn fc-prev" aria-label="上一张">&#8249;</button>
+            <button class="fc-btn fc-next" aria-label="下一张">&#8250;</button>
+            <div class="fc-dots">
+              <span class="fc-dot fc-active"></span>
+              <span class="fc-dot"></span>
+              <span class="fc-dot"></span>
+            </div>
+          </div>
           <div>
+            <span class="tag recommended"><svg><use href="#icon-star"/></svg>推荐</span>
+            <span class="rating" aria-label="5 out of 5">
+              <svg><use href="#icon-star"/></svg><svg><use href="#icon-star"/></svg><svg><use href="#icon-star"/></svg><svg><use href="#icon-star"/></svg><svg><use href="#icon-star"/></svg>
+            </span>
             <h4>Dong Tai Kopitiam</h4>
             <p>亚参叻沙、香脆咖椰吐司、椰浆饭和传统糕点（kuih）。</p>
+          </div>
+        </div>
+        <div class="food-card">
+          <img class="food-photo" src="images/food_yee_fatt.jpg" alt="Yee Fatt Curry Mee">
+          <div>
+            <span class="tag recommended"><svg><use href="#icon-star"/></svg>推荐</span>
+            <h4>Yee Fatt Curry Mee</h4>
+            <p>美味的咖喱面。</p>
           </div>
         </div>
         <!-- duplicate .food-card as needed -->
@@ -917,24 +978,6 @@
         <span class="section-note">中午</span>
       </div>
       <div class="food-row">
-        <div class="food-card">
-          <div class="photo food-photo"><svg><use href="#icon-camera"/></svg></div>
-          <div>
-            <span class="tag recommended"><svg><use href="#icon-star"/></svg>推荐</span>
-            <h4>Yee Fatt Curry Mee</h4>
-            <p>美味的咖喱面。</p>
-          </div>
-        </div>
-        <div class="food-card">
-          <div class="photo food-photo"><svg><use href="#icon-camera"/></svg></div>
-          <div>
-            <span class="rating" aria-label="3 out of 5">
-              <svg><use href="#icon-star"/></svg><svg><use href="#icon-star"/></svg><svg><use href="#icon-star"/></svg>
-            </span>
-            <h4>Restoran Wang Seng</h4>
-            <p>价格便宜、份量大，口味偏重偏咸。脆炸鱼皮是亮点。</p>
-          </div>
-        </div>
         <div class="food-card">
           <div class="photo food-photo"><svg><use href="#icon-camera"/></svg></div>
           <div>
@@ -956,20 +999,28 @@
         <div class="food-card">
           <div class="photo food-photo"><svg><use href="#icon-camera"/></svg></div>
           <div>
-            <h4>Ipoh Tuck Kee Ancient Taste</h4>
-            <p>推荐尝试炒粉。</p>
-          </div>
-        </div>
-        <div class="food-card">
-          <div class="photo food-photo"><svg><use href="#icon-camera"/></svg></div>
-          <div>
             <h4>Choong Kee Pokok</h4>
             <p>美味的炸酿豆腐，传统咖啡店（kopitiam）风格。</p>
           </div>
         </div>
         <div class="food-card">
-          <div class="photo food-photo"><svg><use href="#icon-camera"/></svg></div>
+          <div class="food-carousel">
+            <img src="images/food_dong_tai_1.jpeg" alt="Dong Tai Kopitiam" class="fc-active">
+            <img src="images/food_dong_tai_2.jpeg" alt="Dong Tai Kopitiam">
+            <img src="images/food_dong_tai_3.jpeg" alt="Dong Tai Kopitiam">
+            <button class="fc-btn fc-prev" aria-label="上一张">&#8249;</button>
+            <button class="fc-btn fc-next" aria-label="下一张">&#8250;</button>
+            <div class="fc-dots">
+              <span class="fc-dot fc-active"></span>
+              <span class="fc-dot"></span>
+              <span class="fc-dot"></span>
+            </div>
+          </div>
           <div>
+            <span class="tag recommended"><svg><use href="#icon-star"/></svg>推荐</span>
+            <span class="rating" aria-label="5 out of 5">
+              <svg><use href="#icon-star"/></svg><svg><use href="#icon-star"/></svg><svg><use href="#icon-star"/></svg><svg><use href="#icon-star"/></svg><svg><use href="#icon-star"/></svg>
+            </span>
             <h4>Dong Tai Kopitiam</h4>
             <p>亚参叻沙、香脆咖椰吐司、椰浆饭和传统糕点（kuih）。</p>
           </div>
@@ -979,6 +1030,20 @@
           <div>
             <h4>Leekko Hakka Mee</h4>
             <p>位于 Jalan Theatre。在 Aun Kheng Lim 摊位附近，较远的分店可以跳过。</p>
+          </div>
+        </div>
+        <div class="food-card">
+          <div class="photo food-photo"><svg><use href="#icon-camera"/></svg></div>
+          <div>
+            <h4>Patisserie Boutique</h4>
+            <p>适合喝咖啡休息一下的不错咖啡馆。</p>
+          </div>
+        </div>
+        <div class="food-card">
+          <div class="photo food-photo"><svg><use href="#icon-camera"/></svg></div>
+          <div>
+            <h4>MichealangelO's Pizza</h4>
+            <p>意式料理与披萨，想换换口味时的选择。</p>
           </div>
         </div>
         <!-- duplicate .food-card as needed -->
@@ -1029,18 +1094,14 @@
       <span class="section-note">伴手礼与零食</span>
     </div>
 
-    <div class="buy-feature">
-      <div class="photo">
-        <svg><use href="#icon-camera"/></svg>
-      </div>
-      <div>
-        <span class="tag recommended"><svg><use href="#icon-star"/></svg>必买</span>
-        <h3>Aun Kheng Lim Salted Chicken</h3>
-        <p>当地人气美食，买了之后趁新鲜享用，或带回酒店马上吃最好。</p>
-      </div>
-    </div>
-
     <div class="buy-more grid-2">
+      <div class="food-card">
+        <div class="photo food-photo"><svg><use href="#icon-camera"/></svg></div>
+        <div>
+          <h4>Aun Kheng Lim Salted Chicken</h4>
+          <p>当地人气美食，买了之后趁新鲜享用，或带回酒店马上吃最好。</p>
+        </div>
+      </div>
       <div class="food-card">
         <div class="photo food-photo"><svg><use href="#icon-camera"/></svg></div>
         <div>
@@ -1170,4 +1231,20 @@
   <p class="fill">[一句简短的结语：最后的小提示，或是你希望大家喜欢怡保的原因。]</p>
 </footer>
 
+<script>
+  document.querySelectorAll('.food-carousel').forEach(function(c) {
+    var imgs = c.querySelectorAll('img');
+    var dots = c.querySelectorAll('.fc-dot');
+    var idx = 0;
+    function go(n) {
+      imgs[idx].classList.remove('fc-active');
+      dots[idx].classList.remove('fc-active');
+      idx = (n + imgs.length) % imgs.length;
+      imgs[idx].classList.add('fc-active');
+      dots[idx].classList.add('fc-active');
+    }
+    c.querySelector('.fc-prev').addEventListener('click', function() { go(idx - 1); });
+    c.querySelector('.fc-next').addEventListener('click', function() { go(idx + 1); });
+  });
+</script>
 </body></html>
