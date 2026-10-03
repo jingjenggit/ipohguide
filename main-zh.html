@@ -493,6 +493,49 @@
   }
   .fc-dot.fc-active { background: white; }
 
+  img.food-photo, img.card-photo, .food-carousel { cursor: zoom-in; }
+  .fc-btn { cursor: pointer; }
+
+  /* ---------- lightbox ---------- */
+  .lightbox-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: rgba(20,20,19,0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(1.5rem, 6vw, 4rem);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+  .lightbox-overlay.active { opacity: 1; pointer-events: auto; }
+  .lightbox-overlay img {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 10px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+  .lightbox-close {
+    position: absolute;
+    top: clamp(.75rem, 3vw, 1.5rem);
+    right: clamp(.75rem, 3vw, 1.5rem);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255,255,255,0.12);
+    color: #fff;
+    font-size: 1.4rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .lightbox-close:hover { background: rgba(255,255,255,0.25); }
+
   /* ---------- itinerary ---------- */
   .itin-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.75rem; }
   @media (max-width: 900px) { .itin-grid { grid-template-columns: repeat(2, 1fr); } }
@@ -979,7 +1022,7 @@
       </div>
       <div class="food-row">
         <div class="food-card">
-          <div class="photo food-photo"><svg><use href="#icon-camera"/></svg></div>
+          <img class="food-photo" src="images/food_woong_kee.jpg" alt="Woong Kee Bean Curd Bercham 豆花店">
           <div>
             <span class="tag recommended"><svg><use href="#icon-star"/></svg>推荐</span>
             <span class="rating" aria-label="5 out of 5">
@@ -997,7 +1040,7 @@
           </div>
         </div>
         <div class="food-card">
-          <div class="photo food-photo"><svg><use href="#icon-camera"/></svg></div>
+          <img class="food-photo" src="images/food_choong_kee.jpg" alt="Choong Kee Pokok 炸酿豆腐">
           <div>
             <h4>Choong Kee Pokok</h4>
             <p>美味的炸酿豆腐，传统咖啡店（kopitiam）风格。</p>
@@ -1026,21 +1069,30 @@
           </div>
         </div>
         <div class="food-card">
-          <div class="photo food-photo"><svg><use href="#icon-camera"/></svg></div>
+          <img class="food-photo" src="images/food_leekko.jpeg" alt="Leekko Hakka Mee 客家面">
           <div>
             <h4>Leekko Hakka Mee</h4>
             <p>位于 Jalan Theatre。在 Aun Kheng Lim 摊位附近，较远的分店可以跳过。</p>
           </div>
         </div>
         <div class="food-card">
-          <div class="photo food-photo"><svg><use href="#icon-camera"/></svg></div>
+          <img class="food-photo" src="images/food_patisserie.jpeg" alt="Patisserie Boutique 咖啡馆">
           <div>
             <h4>Patisserie Boutique</h4>
             <p>适合喝咖啡休息一下的不错咖啡馆。</p>
           </div>
         </div>
         <div class="food-card">
-          <div class="photo food-photo"><svg><use href="#icon-camera"/></svg></div>
+          <div class="food-carousel">
+            <img src="images/food_michealangelos_1.jpeg" alt="MichealangelO's Pizza 意式披萨店" class="fc-active">
+            <img src="images/food_michealangelos_2.jpeg" alt="MichealangelO's Pizza 意式披萨店">
+            <button class="fc-btn fc-prev" aria-label="上一张">&#8249;</button>
+            <button class="fc-btn fc-next" aria-label="下一张">&#8250;</button>
+            <div class="fc-dots">
+              <span class="fc-dot fc-active"></span>
+              <span class="fc-dot"></span>
+            </div>
+          </div>
           <div>
             <h4>MichealangelO's Pizza</h4>
             <p>意式料理与披萨，想换换口味时的选择。</p>
@@ -1057,7 +1109,7 @@
       </div>
       <div class="food-row">
         <div class="food-card">
-          <div class="photo food-photo"><svg><use href="#icon-camera"/></svg></div>
+          <img class="food-photo" src="images/food_sunmarpoh.jpg" alt="SunMarpoh Restaurant 热炒餐馆">
           <div>
             <span class="tag recommended"><svg><use href="#icon-star"/></svg>推荐</span>
             <h4>SunMarpoh Restaurant</h4>
@@ -1065,14 +1117,38 @@
           </div>
         </div>
         <div class="food-card">
-          <div class="photo food-photo"><svg><use href="#icon-camera"/></svg></div>
+          <div class="food-carousel">
+            <img src="images/food_michealangelos_1.jpeg" alt="MichealangelO's Pizza 意式披萨店" class="fc-active">
+            <img src="images/food_michealangelos_2.jpeg" alt="MichealangelO's Pizza 意式披萨店">
+            <button class="fc-btn fc-prev" aria-label="上一张">&#8249;</button>
+            <button class="fc-btn fc-next" aria-label="下一张">&#8250;</button>
+            <div class="fc-dots">
+              <span class="fc-dot fc-active"></span>
+              <span class="fc-dot"></span>
+            </div>
+          </div>
           <div>
             <h4>MichealangelO's Pizza</h4>
             <p>意式料理与披萨，想换换口味时的选择。</p>
           </div>
         </div>
         <div class="food-card">
-          <div class="photo food-photo"><svg><use href="#icon-camera"/></svg></div>
+          <div class="food-carousel">
+            <img src="images/food_first_garden_1.jpg" alt="First Garden Night Bazaar 夜市" class="fc-active">
+            <img src="images/food_first_garden_2.jpg" alt="First Garden Night Bazaar 夜市">
+            <img src="images/food_first_garden_3.jpg" alt="First Garden Night Bazaar 夜市">
+            <img src="images/food_first_garden_4.jpg" alt="First Garden Night Bazaar 夜市">
+            <img src="images/food_first_garden_5.jpg" alt="First Garden Night Bazaar 夜市">
+            <button class="fc-btn fc-prev" aria-label="上一张">&#8249;</button>
+            <button class="fc-btn fc-next" aria-label="下一张">&#8250;</button>
+            <div class="fc-dots">
+              <span class="fc-dot fc-active"></span>
+              <span class="fc-dot"></span>
+              <span class="fc-dot"></span>
+              <span class="fc-dot"></span>
+              <span class="fc-dot"></span>
+            </div>
+          </div>
           <div>
             <h4>First Garden Night Bazaar</h4>
             <p>摊位种类丰富的夜市。</p>
@@ -1096,21 +1172,21 @@
 
     <div class="buy-more grid-2">
       <div class="food-card">
-        <div class="photo food-photo"><svg><use href="#icon-camera"/></svg></div>
+        <img class="food-photo" src="images/food_aun_kheng_lim.jpg" alt="Aun Kheng Lim 盐焗鸡">
         <div>
           <h4>Aun Kheng Lim Salted Chicken</h4>
           <p>当地人气美食，买了之后趁新鲜享用，或带回酒店马上吃最好。</p>
         </div>
       </div>
       <div class="food-card">
-        <div class="photo food-photo"><svg><use href="#icon-camera"/></svg></div>
+        <img class="food-photo" src="images/food_peanut_candy.webp" alt="Peanut Candy, Ming Yue Confectionery 花生糖">
         <div>
           <h4>Peanut Candy: Ming Yue Confectionery</h4>
           <p>想带花生糖回家的话，可以来这里买。</p>
         </div>
       </div>
       <div class="food-card">
-        <div class="photo food-photo"><svg><use href="#icon-camera"/></svg></div>
+        <img class="food-photo" src="images/food_guan_heong.webp" alt="Guan Heong Biscuit Shop 肉松莲蓉饼">
         <div>
           <h4>Guan Heong Biscuit Shop</h4>
           <p>以肉松莲蓉饼闻名。</p>
@@ -1231,6 +1307,11 @@
   <p class="fill">[一句简短的结语：最后的小提示，或是你希望大家喜欢怡保的原因。]</p>
 </footer>
 
+<div class="lightbox-overlay" id="lightbox">
+  <button class="lightbox-close" aria-label="关闭">&times;</button>
+  <img src="" alt="">
+</div>
+
 <script>
   document.querySelectorAll('.food-carousel').forEach(function(c) {
     var imgs = c.querySelectorAll('img');
@@ -1246,5 +1327,36 @@
     c.querySelector('.fc-prev').addEventListener('click', function() { go(idx - 1); });
     c.querySelector('.fc-next').addEventListener('click', function() { go(idx + 1); });
   });
+
+  (function() {
+    var overlay = document.getElementById('lightbox');
+    var overlayImg = overlay.querySelector('img');
+    function openLightbox(src, alt) {
+      overlayImg.src = src;
+      overlayImg.alt = alt || '';
+      overlay.classList.add('active');
+    }
+    function closeLightbox() {
+      overlay.classList.remove('active');
+      overlayImg.src = '';
+    }
+    document.querySelectorAll('img.food-photo, img.card-photo').forEach(function(img) {
+      img.addEventListener('click', function() { openLightbox(img.src, img.alt); });
+    });
+    document.querySelectorAll('.food-carousel').forEach(function(c) {
+      c.addEventListener('click', function(e) {
+        if (e.target.closest('.fc-btn')) return;
+        var active = c.querySelector('img.fc-active');
+        if (active) openLightbox(active.src, active.alt);
+      });
+    });
+    overlay.addEventListener('click', function(e) {
+      if (e.target === overlay) closeLightbox();
+    });
+    overlay.querySelector('.lightbox-close').addEventListener('click', closeLightbox);
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeLightbox();
+    });
+  })();
 </script>
 </body></html>

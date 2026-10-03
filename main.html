@@ -493,6 +493,49 @@
   }
   .fc-dot.fc-active { background: white; }
 
+  img.food-photo, img.card-photo, .food-carousel { cursor: zoom-in; }
+  .fc-btn { cursor: pointer; }
+
+  /* ---------- lightbox ---------- */
+  .lightbox-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: rgba(20,20,19,0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(1.5rem, 6vw, 4rem);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+  .lightbox-overlay.active { opacity: 1; pointer-events: auto; }
+  .lightbox-overlay img {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 10px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+  .lightbox-close {
+    position: absolute;
+    top: clamp(.75rem, 3vw, 1.5rem);
+    right: clamp(.75rem, 3vw, 1.5rem);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255,255,255,0.12);
+    color: #fff;
+    font-size: 1.4rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .lightbox-close:hover { background: rgba(255,255,255,0.25); }
+
   /* ---------- itinerary ---------- */
   .itin-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.75rem; }
   @media (max-width: 900px) { .itin-grid { grid-template-columns: repeat(2, 1fr); } }
@@ -979,7 +1022,7 @@
       </div>
       <div class="food-row">
         <div class="food-card">
-          <div class="photo food-photo"><svg><use href="#icon-camera"/></svg></div>
+          <img class="food-photo" src="images/food_woong_kee.jpg" alt="Woong Kee Bean Curd Bercham">
           <div>
             <span class="tag recommended"><svg><use href="#icon-star"/></svg>Recommended</span>
             <span class="rating" aria-label="5 out of 5">
@@ -997,7 +1040,7 @@
           </div>
         </div>
         <div class="food-card">
-          <div class="photo food-photo"><svg><use href="#icon-camera"/></svg></div>
+          <img class="food-photo" src="images/food_choong_kee.jpg" alt="Choong Kee Pokok">
           <div>
             <h4>Choong Kee Pokok</h4>
             <p>Good fried yong tau foo, kopitiam setting.</p>
@@ -1026,21 +1069,30 @@
           </div>
         </div>
         <div class="food-card">
-          <div class="photo food-photo"><svg><use href="#icon-camera"/></svg></div>
+          <img class="food-photo" src="images/food_leekko.jpeg" alt="Leekko Hakka Mee">
           <div>
             <h4>Leekko Hakka Mee</h4>
             <p>At Jalan Theatre. Near the Aun Kheng Lim stall; skip the ones further out.</p>
           </div>
         </div>
         <div class="food-card">
-          <div class="photo food-photo"><svg><use href="#icon-camera"/></svg></div>
+          <img class="food-photo" src="images/food_patisserie.jpeg" alt="Patisserie Boutique">
           <div>
             <h4>Patisserie Boutique</h4>
             <p>A nice cafe for a coffee break.</p>
           </div>
         </div>
         <div class="food-card">
-          <div class="photo food-photo"><svg><use href="#icon-camera"/></svg></div>
+          <div class="food-carousel">
+            <img src="images/food_michealangelos_1.jpeg" alt="MichealangelO's Pizza" class="fc-active">
+            <img src="images/food_michealangelos_2.jpeg" alt="MichealangelO's Pizza">
+            <button class="fc-btn fc-prev" aria-label="Previous photo">&#8249;</button>
+            <button class="fc-btn fc-next" aria-label="Next photo">&#8250;</button>
+            <div class="fc-dots">
+              <span class="fc-dot fc-active"></span>
+              <span class="fc-dot"></span>
+            </div>
+          </div>
           <div>
             <h4>MichealangelO's Pizza</h4>
             <p>Italian &amp; pizza, for when you want something different.</p>
@@ -1057,7 +1109,7 @@
       </div>
       <div class="food-row">
         <div class="food-card">
-          <div class="photo food-photo"><svg><use href="#icon-camera"/></svg></div>
+          <img class="food-photo" src="images/food_sunmarpoh.jpg" alt="SunMarpoh Restaurant">
           <div>
             <span class="tag recommended"><svg><use href="#icon-star"/></svg>Recommended</span>
             <h4>SunMarpoh Restaurant</h4>
@@ -1065,14 +1117,38 @@
           </div>
         </div>
         <div class="food-card">
-          <div class="photo food-photo"><svg><use href="#icon-camera"/></svg></div>
+          <div class="food-carousel">
+            <img src="images/food_michealangelos_1.jpeg" alt="MichealangelO's Pizza" class="fc-active">
+            <img src="images/food_michealangelos_2.jpeg" alt="MichealangelO's Pizza">
+            <button class="fc-btn fc-prev" aria-label="Previous photo">&#8249;</button>
+            <button class="fc-btn fc-next" aria-label="Next photo">&#8250;</button>
+            <div class="fc-dots">
+              <span class="fc-dot fc-active"></span>
+              <span class="fc-dot"></span>
+            </div>
+          </div>
           <div>
             <h4>MichealangelO's Pizza</h4>
             <p>Italian &amp; pizza, for when you want something different.</p>
           </div>
         </div>
         <div class="food-card">
-          <div class="photo food-photo"><svg><use href="#icon-camera"/></svg></div>
+          <div class="food-carousel">
+            <img src="images/food_first_garden_1.jpg" alt="First Garden Night Bazaar" class="fc-active">
+            <img src="images/food_first_garden_2.jpg" alt="First Garden Night Bazaar">
+            <img src="images/food_first_garden_3.jpg" alt="First Garden Night Bazaar">
+            <img src="images/food_first_garden_4.jpg" alt="First Garden Night Bazaar">
+            <img src="images/food_first_garden_5.jpg" alt="First Garden Night Bazaar">
+            <button class="fc-btn fc-prev" aria-label="Previous photo">&#8249;</button>
+            <button class="fc-btn fc-next" aria-label="Next photo">&#8250;</button>
+            <div class="fc-dots">
+              <span class="fc-dot fc-active"></span>
+              <span class="fc-dot"></span>
+              <span class="fc-dot"></span>
+              <span class="fc-dot"></span>
+              <span class="fc-dot"></span>
+            </div>
+          </div>
           <div>
             <h4>First Garden Night Bazaar</h4>
             <p>A night market with a good variety of stalls.</p>
@@ -1096,21 +1172,21 @@
 
     <div class="buy-more grid-2">
       <div class="food-card">
-        <div class="photo food-photo"><svg><use href="#icon-camera"/></svg></div>
+        <img class="food-photo" src="images/food_aun_kheng_lim.jpg" alt="Aun Kheng Lim Salted Chicken">
         <div>
           <h4>Aun Kheng Lim Salted Chicken</h4>
           <p>A local favourite, best enjoyed fresh at the hotel or straight after you buy it.</p>
         </div>
       </div>
       <div class="food-card">
-        <div class="photo food-photo"><svg><use href="#icon-camera"/></svg></div>
+        <img class="food-photo" src="images/food_peanut_candy.webp" alt="Peanut Candy: Ming Yue Confectionery">
         <div>
           <h4>Peanut Candy: Ming Yue Confectionery</h4>
           <p>Where to get it if you're after peanut candy to bring home.</p>
         </div>
       </div>
       <div class="food-card">
-        <div class="photo food-photo"><svg><use href="#icon-camera"/></svg></div>
+        <img class="food-photo" src="images/food_guan_heong.webp" alt="Guan Heong Biscuit Shop">
         <div>
           <h4>Guan Heong Biscuit Shop</h4>
           <p>Famous for their floss pastry with lotus paste.</p>
@@ -1231,6 +1307,11 @@
   <p class="fill">[A short closing line: a last tip, or why you hope people enjoy Ipoh.]</p>
 </footer>
 
+<div class="lightbox-overlay" id="lightbox">
+  <button class="lightbox-close" aria-label="Close">&times;</button>
+  <img src="" alt="">
+</div>
+
 <script>
   document.querySelectorAll('.food-carousel').forEach(function(c) {
     var imgs = c.querySelectorAll('img');
@@ -1246,5 +1327,36 @@
     c.querySelector('.fc-prev').addEventListener('click', function() { go(idx - 1); });
     c.querySelector('.fc-next').addEventListener('click', function() { go(idx + 1); });
   });
+
+  (function() {
+    var overlay = document.getElementById('lightbox');
+    var overlayImg = overlay.querySelector('img');
+    function openLightbox(src, alt) {
+      overlayImg.src = src;
+      overlayImg.alt = alt || '';
+      overlay.classList.add('active');
+    }
+    function closeLightbox() {
+      overlay.classList.remove('active');
+      overlayImg.src = '';
+    }
+    document.querySelectorAll('img.food-photo, img.card-photo').forEach(function(img) {
+      img.addEventListener('click', function() { openLightbox(img.src, img.alt); });
+    });
+    document.querySelectorAll('.food-carousel').forEach(function(c) {
+      c.addEventListener('click', function(e) {
+        if (e.target.closest('.fc-btn')) return;
+        var active = c.querySelector('img.fc-active');
+        if (active) openLightbox(active.src, active.alt);
+      });
+    });
+    overlay.addEventListener('click', function(e) {
+      if (e.target === overlay) closeLightbox();
+    });
+    overlay.querySelector('.lightbox-close').addEventListener('click', closeLightbox);
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeLightbox();
+    });
+  })();
 </script>
 </body></html>
