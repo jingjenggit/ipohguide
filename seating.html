@@ -1,0 +1,499 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wedding Seating Planner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root{
+  --paper:#f7f2ea; --card:#fffdf9; --ink:#2b2a27; --muted:#7b746a; --line:#e6ddcf;
+  --sage:#5d7a63; --sage-d:#3f5a46; --gold:#b9924f; --gold-l:#ecdcbc; --rose:#c46a5e;
+  --chair:#efe6d8; --table:#fbf6ee;
+  --serif:"Cormorant Garamond", Georgia, "Times New Roman", serif;
+  --sans:"Jost", -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:14px/1.4 var(--sans);font-variant-numeric:lining-nums;
+  background-image:radial-gradient(circle at 15% 0%,#fff8ee 0,transparent 40%),radial-gradient(circle at 100% 100%,#efe7da 0,transparent 45%);min-height:100vh}
+button{font:inherit;cursor:pointer}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;gap:16px 28px;padding:28px 32px 18px;border-bottom:1px solid var(--line)}
+.brand h1{font:600 36px/1 var(--serif);margin:0;letter-spacing:.3px}
+.brand h1 em{color:var(--gold);font-style:italic;font-weight:500}
+.brand p{margin:6px 0 0;color:var(--muted);font-size:13px;letter-spacing:.12em;text-transform:uppercase}
+.stats{display:flex;gap:22px;margin-left:auto;flex-wrap:wrap}
+.stat{text-align:right}
+.stat b{display:block;font:600 28px/1 var(--serif);font-variant-numeric:lining-nums}
+.stat span{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.stat.warn b{color:var(--rose)}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;padding:14px 32px;align-items:center;border-bottom:1px solid var(--line);background:rgba(255,253,249,.6);position:sticky;top:0;z-index:5;backdrop-filter:blur(6px)}
+.btn{border:1px solid var(--line);background:var(--card);color:var(--ink);padding:8px 14px;border-radius:999px;font-size:13px;transition:.15s}
+.btn:hover{border-color:var(--gold);color:var(--sage-d)}
+.btn.primary{background:var(--sage-d);color:#fff;border-color:var(--sage-d)}
+.btn.primary:hover{background:var(--sage);color:#fff}
+.btn:disabled{opacity:.4;cursor:default}
+.search{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:8px 14px;font:inherit;min-width:200px;flex:0 1 240px}
+.search:focus,.field input:focus{outline:2px solid var(--gold-l);border-color:var(--gold)}
+.spacer{flex:1}
+.hint{color:var(--muted);font-size:12px}
+main{display:grid;grid-template-columns:280px 1fr;gap:24px;padding:24px 32px 60px;align-items:start}
+@media (max-width:820px){main{grid-template-columns:1fr;padding:16px}header,.toolbar{padding-left:16px;padding-right:16px}.stats{margin-left:0}.stat{text-align:left}}
+aside{position:sticky;top:76px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px}
+.panel h2{font:600 22px/1 var(--serif);margin:0 0 4px;display:flex;justify-content:space-between;align-items:baseline}
+.panel h2 small{font:500 12px var(--sans);color:var(--muted)}
+.panel .sub{color:var(--muted);font-size:12px;margin:0 0 12px}
+.pool{min-height:120px;border:1.5px dashed var(--line);border-radius:12px;padding:8px;display:flex;flex-direction:column;gap:6px;transition:.15s}
+.pool.empty::after{content:"Drag guests here to unseat them";color:var(--muted);font-size:12px;text-align:center;padding:36px 0}
+.legend{margin-top:14px;font-size:12px;color:var(--muted);line-height:1.7}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;vertical-align:-1px;margin-right:6px}
+
+.tables{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:20px}
+.tcard{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:14px 14px 12px;transition:.15s;position:relative}
+.tcard.over{border-color:var(--rose);box-shadow:0 0 0 3px #f3d6d1}
+.drop-hot{border-color:var(--gold)!important;box-shadow:0 0 0 4px var(--gold-l)!important;background:#fffaf0}
+.thead{display:flex;align-items:center;gap:6px}
+.tname{font:600 22px/1.1 var(--serif);font-variant-numeric:lining-nums;flex:1;border:none;background:transparent;padding:2px 4px;border-radius:6px;color:var(--ink);min-width:0}
+.tname:hover{background:var(--paper)}
+.tname:focus{outline:2px solid var(--gold-l);background:#fff}
+.ibtn{border:none;background:transparent;color:var(--muted);width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-size:15px;flex:none}
+.ibtn:hover{background:var(--paper);color:var(--ink)}
+.seatctl{display:flex;align-items:center;gap:2px;font-size:12px;color:var(--muted);background:var(--paper);border-radius:999px;padding:2px}
+.seatctl button{border:none;background:var(--card);width:22px;height:22px;border-radius:50%;color:var(--ink);font-size:14px;line-height:1}
+.seatctl button:disabled{opacity:.35;cursor:default}
+.seatctl span{min-width:52px;text-align:center}
+svg.tsvg{display:block;width:100%;max-width:230px;margin:2px auto 6px;overflow:visible}
+.chair{transition:fill .15s, transform .15s}
+.chair.hl{stroke:var(--ink);stroke-width:2.5}
+.tlist{display:flex;flex-direction:column;gap:5px;min-height:34px;padding:4px;border-radius:10px}
+.tlist.empty::after{content:"Drop guests here";color:var(--muted);font-size:12px;text-align:center;padding:8px 0}
+
+.chip{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:5px 6px 5px 8px;cursor:grab;user-select:none;transition:.12s}
+.chip:hover{border-color:var(--gold);box-shadow:0 2px 8px rgba(80,60,30,.08)}
+.chip.dragging{opacity:.4}
+.chip.match{background:#fff6dc;border-color:var(--gold)}
+.chip.dim{opacity:.35}
+.chip.sel{outline:2px solid var(--sage);}
+.chip .dot{width:10px;height:10px;border-radius:3px;flex:none}
+.chip .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chip .pax{font-size:11px;font-weight:600;background:var(--paper);color:var(--sage-d);border-radius:999px;padding:1px 7px;flex:none}
+.chip .acts{display:flex;gap:0;opacity:0;transition:.12s}
+.chip:hover .acts,.chip.sel .acts{opacity:1}
+.chip .acts button{border:none;background:transparent;color:var(--muted);width:22px;height:22px;border-radius:6px;font-size:12px;padding:0}
+.chip .acts button:hover{background:var(--paper);color:var(--ink)}
+.addt{border:1.5px dashed var(--line);border-radius:22px;background:transparent;color:var(--muted);min-height:220px;font:500 20px var(--serif);display:grid;place-items:center}
+.addt:hover{border-color:var(--gold);color:var(--sage-d);background:var(--card)}
+
+dialog{border:none;border-radius:18px;padding:22px;background:var(--card);color:var(--ink);box-shadow:0 20px 60px rgba(40,30,10,.25);width:min(380px,92vw)}
+dialog::backdrop{background:rgba(43,42,39,.35)}
+dialog h3{font:600 24px var(--serif);margin:0 0 14px}
+.field{display:flex;flex-direction:column;gap:5px;margin-bottom:12px;font-size:12px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.field input,.field select{font:15px var(--sans);text-transform:none;letter-spacing:0;color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:9px 11px;background:#fff}
+.drow{display:flex;gap:8px;justify-content:flex-end;margin-top:6px}
+.dmsg{color:var(--muted);margin:0 0 14px;line-height:1.5}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:10px 18px;border-radius:999px;font-size:13px;opacity:0;transition:.25s;pointer-events:none;z-index:50}
+.toast.show{opacity:1;transform:translateX(-50%)}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <h1>Jing Long <em>&amp;</em> Ejean</h1>
+    <p>Seating plan</p>
+  </div>
+  <div class="stats">
+    <div class="stat"><b id="sTables">0</b><span>Tables</span></div>
+    <div class="stat"><b id="sSeated">0</b><span>Seated pax</span></div>
+    <div class="stat"><b id="sSeats">0</b><span>Chairs</span></div>
+    <div class="stat" id="sUnWrap"><b id="sUn">0</b><span>Unseated</span></div>
+    <div class="stat" id="sOverWrap"><b id="sOver">0</b><span>Tables over</span></div>
+  </div>
+</header>
+
+<div class="toolbar">
+  <button class="btn primary" id="bAddGuest">+ Guest</button>
+  <button class="btn" id="bAddTable">+ Table</button>
+  <input class="search" id="q" placeholder="Find a guest…" autocomplete="off">
+  <button class="btn" id="bUndo" title="Undo (Ctrl/⌘ Z)">↶ Undo</button>
+  <span class="spacer"></span>
+  <button class="btn" id="bImport">Import .xlsx</button>
+  <button class="btn" id="bReset">Reset to sheet</button>
+  <button class="btn primary" id="bExport">Export to Excel</button>
+  <input type="file" id="file" accept=".xlsx,.xls" hidden>
+</div>
+
+<main>
+  <aside>
+    <div class="panel">
+      <h2>Unseated <small id="poolCount">0 pax</small></h2>
+      <p class="sub">Drag a name onto any table. Click a name, then click a table, to move it without dragging.</p>
+      <div class="pool" id="pool" data-table=""></div>
+      <div class="legend">
+        <div><i style="background:var(--sage)"></i>Filled chair (colour = party)</div>
+        <div><i style="background:var(--chair);border:1px solid #d9ccb8"></i>Empty chair</div>
+        <div><i style="background:var(--rose)"></i>Over capacity</div>
+        <div style="margin-top:6px">Groups like “4x children” or “Son + DIL” count as several pax. Use ⇲ to split a group into individuals.</div>
+      </div>
+    </div>
+  </aside>
+  <section class="tables" id="tables"></section>
+</main>
+
+<dialog id="dlg">
+  <form method="dialog" id="dlgForm">
+    <h3 id="dlgTitle"></h3>
+    <div id="dlgBody"></div>
+    <div class="drow">
+      <button class="btn" value="cancel" type="button" id="dlgCancel">Cancel</button>
+      <button class="btn primary" value="ok" id="dlgOk">Save</button>
+    </div>
+  </form>
+</dialog>
+<div class="toast" id="toast"></div>
+
+<script>
+const SEED = [{"name": "Ejean's Family 6", "guests": ["Er gu", "Guzhang", "Chee kit", "Chee Kit's wife", "Chee Kit's Daughter x2", "Chee Hou", "Chee Hou's wife", "Joo Peng", "Chee Kang"], "seats": 10}, {"name": "Ejean's Family 5", "guests": ["Grandpa", "Grandma", "Yiyi", "Yizhang", "Yun Wei", "Kent If", "Cuebee", "Cue Bee's Son x2", "Ying ying", "?popo sister"], "seats": 11}, {"name": "Ejean's Family 4", "guests": ["Da jiu", "Yong yong", "Jeff's mum", "Sam suk po", "Ah yong", "Ah yong's wife", "Ah Yong's Son", "Fong Yi", "Fong Yi's hb", "Fong Yi's Son"], "seats": 10}, {"name": "Ejean's Family 3", "guests": ["Winnie", "Winnie's hb", "Winnie's 4x children", "Li Shyun", "Li Shyun's 2x children"], "seats": 10}, {"name": "Ejean's Family 2", "guests": ["Fifth grandaunt", "Fifth grandaunt's hb", "Sixth grandaunt", "Sixth grandaunt's hb", "Sixth grandaunt's Son +DIL", "Sixth grandaunt's Son", "Seventh grandaunt", "Seventh grandaunt' hb"], "seats": 10}, {"name": "Ejean's Family 1", "guests": ["Xiao gu", "Youngest dg", "Youngest dg hb", "Youngest dg's baby", "Da gu", "Da gu husband", "Ba mei", "Suk Mei"], "seats": 10}, {"name": "Mom's friends", "guests": ["Mom's friends x10"], "seats": 10}, {"name": "Mama & Dedey", "guests": ["Mama friends x8", "Mama", "Dedey", "Kelly"], "seats": 11}, {"name": "Friends", "guests": ["Catherine", "You Soon", "Sharmaine", "Wei Xiang", "Chloe", "Chloe's Bf", "Man Teng", "Jing Xuan", "Wen Di", "Pui San"], "seats": 10}, {"name": "Colleagues", "guests": ["Agnes", "Zhi Ying", "Zhao tian", "Sengja", "Hsao Kham", "Htay Htay", "Evelyne", "Evelyne's BF", "Brandon"], "seats": 10}, {"name": "Ballet table", "guests": ["Ying Yi", "Pui Yi", "Teacher", "Ballet girls 4 - 6x"], "seats": 10}, {"name": "JL's Family 2", "guests": ["SH's brother", "SH's parents", "Beng liang", "Jun", "4yi", "Jiu Jiu", "Jw", "Jk", "Jx"], "seats": 10}, {"name": "JL's Family 1", "guests": ["Beng lim", "Beng lim's wife", "Beng lim's 4x children", "Beng Xiang", "Beng Xiang's 2x children", "Qiu Yan"], "seats": 10}, {"name": "VIP Table", "guests": ["Jing Long", "Ejean", "JL's Dad", "JL's Mom", "Guo Xuan", "Guo Xuan's Wife", "Ejean's Mom", "Ejean's Didi", "Ejean's Popo", "JL's gugu", "Da Yi", "San Yi"], "seats": 12}];
+const MAX_SEATS = 12, STORE = "wedding-seating-v1";
+const SEED_SIG = JSON.stringify(SEED).length + ":" + [...JSON.stringify(SEED)].reduce((h,c) => (h*31 + c.charCodeAt(0)) >>> 0, 7);
+const PALETTE = ["#5d7a63","#b9924f","#7f8fb3","#a4688f","#5f9ea0","#c2845a","#8a9a5b","#9b7bb8","#6b8fa3","#b07a6a","#4f7f74","#a68a3e"];
+
+// ---------- pax parsing ----------
+function parsePax(name){
+  const s = name.toLowerCase();
+  let m;
+  if ((m = s.match(/(\d+)\s*[-–~]\s*(\d+)\s*x/)) || (m = s.match(/x\s*(\d+)\s*[-–~]\s*(\d+)/))) return Math.max(+m[1], +m[2]);
+  if ((m = s.match(/x\s*(\d+)/)) || (m = s.match(/(\d+)\s*x\b/)) || (m = s.match(/(\d+)\s*x/))) return Math.max(1, +m[1]);
+  if (s.includes("+")) return s.split("+").filter(p => p.trim()).length;
+  if (/\b(parents|couple)\b/.test(s)) return 2;
+  return 1;
+}
+
+// ---------- state ----------
+let uid = 1;
+const nid = p => p + (uid++).toString(36) + Math.random().toString(36).slice(2,5);
+function fromSheet(cols){
+  const tables = [], guests = [];
+  cols.forEach(c => {
+    const t = { id: nid("t"), name: c.name, seats: 10 };
+    let pax = 0;
+    c.guests.forEach(g => { const p = parsePax(g); pax += p; guests.push({ id: nid("g"), name: g, pax: p, table: t.id }); });
+    t.seats = Math.min(MAX_SEATS, Math.max(1, c.seats || Math.max(10, pax)));
+    tables.push(t);
+  });
+  return { tables, guests, seedSig: SEED_SIG };
+}
+let state, undoStack = [];
+try { state = JSON.parse(localStorage.getItem(STORE)); } catch(e) {}
+// A newer base sheet baked into this file replaces progress saved against the old one
+if (!state || !state.tables || state.seedSig !== SEED_SIG) state = fromSheet(SEED);
+
+function save(){ try { localStorage.setItem(STORE, JSON.stringify(state)); } catch(e) {} }
+function commit(fn){
+  undoStack.push(JSON.stringify(state)); if (undoStack.length > 100) undoStack.shift();
+  fn(); save(); render();
+}
+function undo(){
+  if (!undoStack.length) return;
+  state = JSON.parse(undoStack.pop()); save(); render(); toast("Undone");
+}
+
+// ---------- helpers ----------
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const guestsOf = tid => state.guests.filter(g => (g.table || "") === (tid || ""));
+const paxOf = tid => guestsOf(tid).reduce((a,g) => a + g.pax, 0);
+function colorFor(g){ const i = guestsOf(g.table).indexOf(g); return PALETTE[(i < 0 ? 0 : i) % PALETTE.length]; }
+let selected = null, query = "";
+
+function toast(msg){ const t = $("#toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove("show"), 1800); }
+
+// ---------- table svg ----------
+function tableSVG(t){
+  const gs = guestsOf(t.id), seats = t.seats;
+  const pax = gs.reduce((a,g)=>a+g.pax,0);
+  const total = Math.max(seats, pax);           // draw extra (red) chairs if over
+  const cx = 120, cy = 120, R = 86, tr = 60;
+  // seat -> guest map
+  const owners = []; gs.forEach(g => { for (let i=0;i<g.pax;i++) owners.push(g); });
+  const cw = Math.min(30, 2*Math.PI*R/total*0.72), ch = 22;
+  let chairs = "";
+  for (let i=0;i<total;i++){
+    const a = -Math.PI/2 + i*2*Math.PI/total, x = cx + R*Math.cos(a), y = cy + R*Math.sin(a);
+    const deg = a*180/Math.PI + 90, g = owners[i], extra = i >= seats;
+    const fill = extra ? "var(--rose)" : g ? colorFor(g) : "var(--chair)";
+    const stroke = g || extra ? "none" : "#d9ccb8";
+    chairs += `<g transform="translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${deg.toFixed(1)})">
+      <rect class="chair" ${g?`data-g="${g.id}"`:""} x="${-cw/2}" y="${-ch/2}" width="${cw}" height="${ch}" rx="7" fill="${fill}" stroke="${stroke}" stroke-width="1.2"${extra?' stroke-dasharray="3 2"':''}>
+      <title>${g ? esc(g.name) : "Empty chair"}${extra?" (over capacity)":""}</title></rect>
+      <rect x="${-cw/2+3}" y="${ch/2-6}" width="${cw-6}" height="3" rx="1.5" fill="rgba(255,255,255,.35)"/></g>`;
+  }
+  const over = pax > seats;
+  return `<svg class="tsvg" viewBox="0 0 240 240" aria-label="${esc(t.name)}: ${pax} of ${seats} seats">
+    <circle cx="${cx}" cy="${cy}" r="${tr+6}" fill="none" stroke="var(--gold-l)" stroke-width="1"/>
+    <circle cx="${cx}" cy="${cy}" r="${tr}" fill="var(--table)" stroke="var(--gold)" stroke-width="1.4"/>
+    <circle cx="${cx}" cy="${cy}" r="${tr-9}" fill="none" stroke="var(--gold-l)" stroke-width="1" stroke-dasharray="2 4"/>
+    ${chairs}
+    <text x="${cx}" y="${cy+4}" text-anchor="middle" style="font:600 34px var(--serif);font-variant-numeric:lining-nums" fill="${over?'var(--rose)':'var(--ink)'}">${pax}<tspan style="font-size:20px" fill="var(--muted)">/${seats}</tspan></text>
+    <text x="${cx}" y="${cy+24}" text-anchor="middle" style="font:500 10px var(--sans);letter-spacing:.16em" fill="${over?'var(--rose)':'var(--muted)'}">${over ? `${pax-seats} OVER` : pax===seats ? "FULL" : `${seats-pax} FREE`}</text>
+  </svg>`;
+}
+
+function chipHTML(g){
+  const q = query && g.name.toLowerCase().includes(query);
+  const cls = ["chip", selected===g.id?"sel":"", query ? (q?"match":"dim") : ""].join(" ");
+  return `<div class="${cls}" draggable="true" data-id="${g.id}" title="${esc(g.name)} — ${g.pax} pax">
+    <span class="dot" style="background:${colorFor(g)}"></span>
+    <span class="nm">${esc(g.name)}</span>
+    ${g.pax>1?`<span class="pax">${g.pax}</span>`:""}
+    <span class="acts">
+      ${g.pax>1?`<button data-act="split" title="Split into individuals">⇲</button>`:""}
+      <button data-act="edit" title="Edit">✎</button>
+      <button data-act="del" title="Remove guest">✕</button>
+    </span></div>`;
+}
+
+// ---------- render ----------
+function render(){
+  const T = $("#tables");
+  T.innerHTML = state.tables.map(t => {
+    const gs = guestsOf(t.id), pax = paxOf(t.id);
+    return `<article class="tcard${pax>t.seats?" over":""}" data-table="${t.id}">
+      <div class="thead">
+        <input class="tname" value="${esc(t.name)}" data-rename="${t.id}" aria-label="Table name">
+        <div class="seatctl" title="Chairs at this table">
+          <button data-seat="-1" ${t.seats<=1?"disabled":""}>−</button>
+          <span>${t.seats} chairs</span>
+          <button data-seat="1" ${t.seats>=MAX_SEATS?"disabled":""}>+</button>
+        </div>
+        <button class="ibtn" data-deltable title="Remove table">✕</button>
+      </div>
+      ${tableSVG(t)}
+      <div class="tlist${gs.length?"":" empty"}" data-table="${t.id}">${gs.map(chipHTML).join("")}</div>
+    </article>`;
+  }).join("") + `<button class="addt" id="bAddTable2">+ Add a table</button>`;
+
+  const pool = guestsOf(null);
+  $("#pool").innerHTML = pool.map(chipHTML).join("");
+  $("#pool").classList.toggle("empty", !pool.length);
+  const unPax = pool.reduce((a,g)=>a+g.pax,0);
+  $("#poolCount").textContent = `${unPax} pax`;
+
+  const seated = state.guests.filter(g=>g.table).reduce((a,g)=>a+g.pax,0);
+  const overN = state.tables.filter(t => paxOf(t.id) > t.seats).length;
+  $("#sTables").textContent = state.tables.length;
+  $("#sSeated").textContent = seated;
+  $("#sSeats").textContent = state.tables.reduce((a,t)=>a+t.seats,0);
+  $("#sUn").textContent = unPax; $("#sUnWrap").classList.toggle("warn", unPax>0);
+  $("#sOver").textContent = overN; $("#sOverWrap").classList.toggle("warn", overN>0);
+  $("#bUndo").disabled = !undoStack.length;
+}
+
+// ---------- moving ----------
+function moveGuest(gid, tid, beforeId){
+  commit(() => {
+    const i = state.guests.findIndex(g => g.id === gid); if (i<0) return;
+    const [g] = state.guests.splice(i,1);
+    g.table = tid || null;
+    let at = beforeId ? state.guests.findIndex(x => x.id === beforeId) : -1;
+    if (at < 0) { // append after last guest of that table
+      let last = -1; state.guests.forEach((x,k) => { if ((x.table||"")===(tid||"")) last = k; });
+      at = last + 1 || state.guests.length;
+    }
+    state.guests.splice(at, 0, g);
+  });
+  const t = state.tables.find(t=>t.id===tid);
+  if (t && paxOf(t.id) > t.seats) toast(`${t.name} is now over capacity`);
+}
+
+// drag & drop
+let dragId = null;
+document.addEventListener("dragstart", e => {
+  const c = e.target.closest?.(".chip"); if (!c) return;
+  dragId = c.dataset.id; c.classList.add("dragging");
+  e.dataTransfer.effectAllowed = "move"; e.dataTransfer.setData("text/plain", dragId);
+});
+document.addEventListener("dragend", () => { dragId = null; document.querySelectorAll(".dragging,.drop-hot").forEach(el => el.classList.remove("dragging","drop-hot")); });
+function dropZone(el){ return el.closest?.(".tcard, .pool"); }
+document.addEventListener("dragover", e => {
+  if (!dragId) return; const z = dropZone(e.target); if (!z) return;
+  e.preventDefault();
+  document.querySelectorAll(".drop-hot").forEach(el => el !== z && el.classList.remove("drop-hot"));
+  z.classList.add("drop-hot");
+});
+document.addEventListener("drop", e => {
+  if (!dragId) return; const z = dropZone(e.target); if (!z) return;
+  e.preventDefault();
+  const before = e.target.closest(".chip");
+  const beforeId = before && before.dataset.id !== dragId ? before.dataset.id : null;
+  moveGuest(dragId, z.dataset.table || null, beforeId);
+});
+
+// clicks
+document.addEventListener("click", e => {
+  const act = e.target.closest("[data-act]");
+  const chip = e.target.closest(".chip");
+  if (act && chip){ e.stopPropagation(); return chipAction(act.dataset.act, chip.dataset.id); }
+  if (chip){ selected = selected === chip.dataset.id ? null : chip.dataset.id; render(); return; }
+  const card = e.target.closest(".tcard");
+  if (e.target.closest("[data-seat]") && card){
+    const d = +e.target.closest("[data-seat]").dataset.seat;
+    return commit(() => { const t = state.tables.find(t=>t.id===card.dataset.table); t.seats = Math.min(MAX_SEATS, Math.max(1, t.seats + d)); });
+  }
+  if (e.target.closest("[data-deltable]") && card) return deleteTable(card.dataset.table);
+  if (e.target.id === "bAddTable2") return addTable();
+  if (selected && (card || e.target.closest(".pool")) && !e.target.closest("input,button")){
+    const gid = selected; selected = null;
+    return moveGuest(gid, card ? card.dataset.table : null);
+  }
+});
+document.addEventListener("mouseover", e => {
+  const c = e.target.closest(".chip");
+  document.querySelectorAll(".chair.hl").forEach(r => r.classList.remove("hl"));
+  if (c) document.querySelectorAll(`.chair[data-g="${c.dataset.id}"]`).forEach(r => r.classList.add("hl"));
+});
+document.addEventListener("change", e => {
+  const id = e.target.dataset.rename; if (!id) return;
+  const v = e.target.value.trim(); const t = state.tables.find(t=>t.id===id);
+  if (v && v !== t.name) commit(() => t.name = v); else e.target.value = t.name;
+});
+document.addEventListener("keydown", e => {
+  if ((e.metaKey||e.ctrlKey) && e.key.toLowerCase()==="z" && !e.target.closest("input")){ e.preventDefault(); undo(); }
+  if (e.key==="Escape" && selected){ selected=null; render(); }
+  if (e.key==="Enter" && e.target.dataset.rename) e.target.blur();
+});
+
+// ---------- dialogs ----------
+function dialog(title, bodyHTML, okLabel="Save"){
+  return new Promise(res => {
+    const d = $("#dlg"); $("#dlgTitle").textContent = title; $("#dlgBody").innerHTML = bodyHTML; $("#dlgOk").textContent = okLabel;
+    const done = v => { d.close(); $("#dlgForm").onsubmit = null; $("#dlgCancel").onclick = null; res(v); };
+    $("#dlgForm").onsubmit = ev => { ev.preventDefault(); const f = {}; d.querySelectorAll("[name]").forEach(i => f[i.name] = i.value); done(f); };
+    $("#dlgCancel").onclick = () => done(null);
+    d.oncancel = () => done(null);
+    d.showModal(); d.querySelector("input")?.focus(); d.querySelector("input")?.select?.();
+  });
+}
+const tableOptions = sel => `<option value="">— Unseated —</option>` + state.tables.map(t => `<option value="${t.id}" ${t.id===sel?"selected":""}>${esc(t.name)} (${paxOf(t.id)}/${t.seats})</option>`).join("");
+
+async function guestDialog(g){
+  const f = await dialog(g ? "Edit guest" : "Add guest", `
+    <label class="field">Name<input name="name" required value="${esc(g?.name||"")}" placeholder="e.g. Auntie May + husband"></label>
+    <label class="field">Pax (seats taken)<input name="pax" type="number" min="1" max="${MAX_SEATS}" value="${g?.pax||""}" placeholder="auto from name"></label>
+    <label class="field">Table<select name="table">${tableOptions(g ? g.table : (selected ? null : null))}</select></label>`, g ? "Save" : "Add");
+  if (!f || !f.name.trim()) return;
+  const name = f.name.trim(), pax = Math.max(1, Math.min(MAX_SEATS, +f.pax || parsePax(name)));
+  commit(() => {
+    if (g){ const x = state.guests.find(x=>x.id===g.id); x.name = name; x.pax = pax; x.table = f.table || null; }
+    else state.guests.push({ id: nid("g"), name, pax, table: f.table || null });
+  });
+}
+async function addTable(){
+  const n = state.tables.length + 1;
+  const f = await dialog("Add table", `
+    <label class="field">Name<input name="name" required value="Table${n}"></label>
+    <label class="field">Chairs (max ${MAX_SEATS})<input name="seats" type="number" min="1" max="${MAX_SEATS}" value="10"></label>`, "Add");
+  if (!f) return;
+  commit(() => state.tables.push({ id: nid("t"), name: f.name.trim() || `Table${n}`, seats: Math.max(1, Math.min(MAX_SEATS, +f.seats || 10)) }));
+}
+async function deleteTable(id){
+  const t = state.tables.find(t=>t.id===id), n = guestsOf(id).length;
+  const ok = await dialog(`Remove ${t.name}?`, `<p class="dmsg">${n ? `Its ${n} guest entr${n>1?"ies":"y"} (${paxOf(id)} pax) will move to <b>Unseated</b>.` : "This table is empty."}</p>`, "Remove");
+  if (!ok) return;
+  commit(() => { state.guests.forEach(g => { if (g.table===id) g.table = null; }); state.tables = state.tables.filter(x=>x.id!==id); });
+}
+async function chipAction(act, id){
+  const g = state.guests.find(x=>x.id===id); if (!g) return;
+  if (act==="edit") return guestDialog(g);
+  if (act==="del"){
+    const ok = await dialog("Remove guest?", `<p class="dmsg"><b>${esc(g.name)}</b> (${g.pax} pax) will be deleted from the plan.</p>`, "Remove");
+    if (ok) commit(() => state.guests = state.guests.filter(x=>x.id!==id));
+  }
+  if (act==="split"){
+    const base = g.name.replace(/\s*\(?\d+\s*[-–~]\s*\d+\s*x\)?|\s*\bx\s*\d+|\s*\b\d+\s*x\b/ig, "").trim() || g.name;
+    const parts = g.name.includes("+") ? g.name.split("+").map(s=>s.trim()).filter(Boolean) : null;
+    commit(() => {
+      const i = state.guests.indexOf(g);
+      const fresh = Array.from({length:g.pax}, (_,k) => ({ id: nid("g"), name: parts && parts.length===g.pax ? parts[k] : `${base} ${k+1}`, pax: 1, table: g.table }));
+      state.guests.splice(i, 1, ...fresh);
+    });
+    toast(`Split into ${g.pax} guests`);
+  }
+}
+
+// ---------- excel ----------
+function exportXLSX(){
+  if (!window.XLSX) return toast("Excel library didn't load — check your internet connection");
+  const cols = state.tables.map(t => guestsOf(t.id));
+  const depth = Math.max(0, ...cols.map(c=>c.length));
+  const rows = [state.tables.map(t=>t.name)];
+  for (let r=0;r<depth;r++) rows.push(cols.map(c => c[r] ? c[r].name : ""));
+  rows.push(state.tables.map(()=> ""));
+  rows.push(state.tables.map(t => paxOf(t.id)));
+  const pool = guestsOf(null);
+  const ws = XLSX.utils.aoa_to_sheet(rows);
+  ws["!cols"] = state.tables.map((t,i) => ({ wch: Math.max(12, t.name.length, ...cols[i].map(g=>g.name.length)) + 2 }));
+
+  const list = [["Table","Guest","Pax","Chairs at table"]];
+  state.tables.forEach(t => guestsOf(t.id).forEach(g => list.push([t.name, g.name, g.pax, t.seats])));
+  pool.forEach(g => list.push(["(Unseated)", g.name, g.pax, ""]));
+  list.push([], ["Total pax", "", state.guests.reduce((a,g)=>a+g.pax,0), state.tables.reduce((a,t)=>a+t.seats,0)]);
+  const ws2 = XLSX.utils.aoa_to_sheet(list);
+  ws2["!cols"] = [{wch:14},{wch:32},{wch:6},{wch:16}];
+
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Table arrangement");
+  XLSX.utils.book_append_sheet(wb, ws2, "Seating list");
+  XLSX.writeFile(wb, "Wedding - Table arrangement.xlsx");
+  toast("Exported Wedding - Table arrangement.xlsx");
+}
+function importXLSX(file){
+  if (!window.XLSX) return toast("Excel library didn't load — check your internet connection");
+  const rd = new FileReader();
+  rd.onload = () => {
+    const wb = XLSX.read(rd.result, { type: "array" });
+    const name = wb.SheetNames.find(n => n.toLowerCase()==="table arrangement") || wb.SheetNames[0];
+    const aoa = XLSX.utils.sheet_to_json(wb.Sheets[name], { header: 1, defval: "" });
+    if (!aoa.length) return toast("That sheet looks empty");
+    const head = aoa[0], cols = [];
+    head.forEach((h,ci) => {
+      if (!String(h).trim()) return;
+      const guests = [];
+      for (let r=1;r<aoa.length;r++){
+        const v = String(aoa[r][ci] ?? "").replace(/\s+/g," ").trim();
+        if (!v) continue;
+        if (/^[\d.+\s]+$/.test(v)) continue;          // totals row
+        guests.push(v);
+      }
+      cols.push({ name: String(h).trim(), guests });
+    });
+    // Chair counts, if the workbook has the "Seating list" sheet from a previous export
+    const ls = wb.Sheets[wb.SheetNames.find(n => n.toLowerCase()==="seating list")];
+    if (ls) XLSX.utils.sheet_to_json(ls, { header: 1, defval: "" }).forEach(r => {
+      const c = cols.find(c => c.name === String(r[0]).trim());
+      if (c && +r[3]) c.seats = +r[3];
+    });
+    commit(() => state = fromSheet(cols));
+    toast(`Imported ${cols.length} tables from “${name}”`);
+  };
+  rd.readAsArrayBuffer(file);
+}
+
+// ---------- toolbar ----------
+$("#bAddGuest").onclick = () => guestDialog(null);
+$("#bAddTable").onclick = addTable;
+$("#bUndo").onclick = undo;
+$("#bExport").onclick = exportXLSX;
+$("#bImport").onclick = () => $("#file").click();
+$("#file").onchange = e => { const f = e.target.files[0]; if (f) importXLSX(f); e.target.value = ""; };
+$("#bReset").onclick = async () => {
+  const ok = await dialog("Reset to original sheet?", `<p class="dmsg">This replaces your current plan with the arrangement from Wedding.xlsx. You can undo afterwards.</p>`, "Reset");
+  if (ok) commit(() => state = fromSheet(SEED));
+};
+$("#q").oninput = e => { query = e.target.value.trim().toLowerCase(); render(); };
+
+render();
+</script>
+</body>
+</html>
