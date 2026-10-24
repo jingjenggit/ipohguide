@@ -1,0 +1,1401 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Wedding Run Sheet</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Besley:ital,wght@0,400..900;1,400..900&family=Work+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<style>
+  :root {
+    --paper: #EFF1EA;
+    --surface: #FFFFFF;
+    --surface-2: #E6E9DF;
+    --ink: #23281F;
+    --ink-soft: #5B6358;
+    --line: rgba(35,40,31,0.14);
+    --line-strong: rgba(35,40,31,0.28);
+    --accent: #7C2D3B;
+    --accent-ink: #FFFFFF;
+    --accent-soft: rgba(124,45,59,0.1);
+    --gold: #9C7A2E;
+    --done: #3F6B4C;
+    --done-soft: rgba(63,107,76,0.12);
+    --danger: #AA4A2E;
+    --shadow: 0 10px 28px rgba(35,40,31,0.08);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #161A16;
+      --surface: #1D221D;
+      --surface-2: #262B25;
+      --ink: #E7E9E1;
+      --ink-soft: #A6AC9F;
+      --line: rgba(231,233,225,0.14);
+      --line-strong: rgba(231,233,225,0.26);
+      --accent: #D98B98;
+      --accent-ink: #2A1216;
+      --accent-soft: rgba(217,139,152,0.16);
+      --gold: #D4B36A;
+      --done: #7FBE92;
+      --done-soft: rgba(127,190,146,0.14);
+      --danger: #D97A5C;
+      --shadow: 0 10px 28px rgba(0,0,0,0.35);
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #161A16;
+    --surface: #1D221D;
+    --surface-2: #262B25;
+    --ink: #E7E9E1;
+    --ink-soft: #A6AC9F;
+    --line: rgba(231,233,225,0.14);
+    --line-strong: rgba(231,233,225,0.26);
+    --accent: #D98B98;
+    --accent-ink: #2A1216;
+    --accent-soft: rgba(217,139,152,0.16);
+    --gold: #D4B36A;
+    --done: #7FBE92;
+    --done-soft: rgba(127,190,146,0.14);
+    --danger: #D97A5C;
+    --shadow: 0 10px 28px rgba(0,0,0,0.35);
+  }
+
+  * { box-sizing: border-box; }
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Work Sans", ui-sans-serif, system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3 { font-family: "Besley", ui-serif, Georgia, serif; text-wrap: balance; margin: 0; color: var(--ink); }
+  .mono { font-family: "JetBrains Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+
+  button, input, textarea { font-family: inherit; font-size: inherit; color: inherit; }
+  button { cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .app {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: clamp(1rem, 3vw, 2rem) clamp(1rem, 4vw, 1.75rem) 4rem;
+  }
+
+  /* ---------- topbar ---------- */
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    padding: 1rem 0 1.25rem;
+    margin-bottom: 1.25rem;
+    background: color-mix(in srgb, var(--paper) 92%, transparent);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line);
+  }
+  .eyebrow {
+    display: block;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.35rem;
+  }
+  .topbar h1 { font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 650; }
+  .topbar-actions { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+  .sync-status { font-size: 0.78rem; color: var(--ink-soft); display: flex; align-items: center; gap: 0.4rem; }
+  .sync-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--done); flex: none; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.6rem 1.1rem;
+    border-radius: 9px;
+    border: 1px solid var(--line-strong);
+    background: var(--surface);
+    color: var(--ink);
+    font-weight: 600;
+    font-size: 0.88rem;
+    white-space: nowrap;
+  }
+  .btn:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-primary {
+    background: var(--accent);
+    color: var(--accent-ink);
+    border-color: var(--accent);
+  }
+  .btn-primary:hover { opacity: 0.9; color: var(--accent-ink); border-color: var(--accent); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn:disabled:hover { border-color: var(--line-strong); color: var(--ink); }
+
+  /* ---------- layout ---------- */
+  .layout { display: grid; grid-template-columns: 172px 1fr; gap: 1.75rem; align-items: start; }
+  @media (max-width: 760px) {
+    .layout { grid-template-columns: 1fr; }
+  }
+
+  /* ---------- day rail ---------- */
+  .day-rail {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    position: sticky;
+    top: 5.5rem;
+  }
+  @media (max-width: 760px) {
+    .day-rail {
+      position: static;
+      flex-direction: row;
+      overflow-x: auto;
+      gap: 0.5rem;
+      padding-bottom: 0.35rem;
+      -webkit-overflow-scrolling: touch;
+    }
+  }
+  .day-tab {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.55rem 0.7rem;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    background: transparent;
+    text-align: left;
+    flex: none;
+  }
+  @media (max-width: 760px) {
+    .day-tab { flex-direction: column; align-items: flex-start; gap: 0.15rem; min-width: 76px; }
+  }
+  .day-tab:hover { background: var(--surface-2); }
+  .day-tab.active { background: var(--surface); border-color: var(--line-strong); box-shadow: var(--shadow); }
+  .day-tab .dow { font-size: 0.68rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-soft); }
+  .day-tab.active .dow { color: var(--accent); }
+  .day-tab .num { font-family: "JetBrains Mono", monospace; font-weight: 600; font-size: 1.2rem; font-variant-numeric: tabular-nums; }
+  .day-tab .meta { display: flex; flex-direction: column; gap: 0.1rem; }
+  .day-tab .counts { font-size: 0.68rem; color: var(--ink-soft); display: flex; gap: 0.35rem; }
+  .day-tab .tab-title {
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--accent);
+    max-width: 92px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .day-tab .today-flag {
+    font-size: 0.6rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 700;
+  }
+  .day-tab.add-tab {
+    justify-content: center;
+    color: var(--ink-soft);
+    font-family: "JetBrains Mono", monospace;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border: 1px dashed var(--line-strong);
+  }
+  .day-tab.add-tab:hover { color: var(--accent); border-color: var(--accent); background: var(--surface-2); }
+
+  /* ---------- add-day panel ---------- */
+  .add-day-panel {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    padding: 0.9rem 1.1rem;
+    margin-bottom: 1.25rem;
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+  }
+  .add-day-label { font-size: 0.85rem; color: var(--ink-soft); font-weight: 600; }
+  .add-day-panel input[type="date"] {
+    border: 1px solid var(--line-strong);
+    background: var(--surface-2);
+    border-radius: 8px;
+    padding: 0.5rem 0.6rem;
+    color: var(--ink);
+  }
+
+  /* ---------- per-day notes ---------- */
+  .notes-body { padding: 0.9rem 1.25rem 1.15rem; }
+  .notes-body textarea {
+    width: 100%;
+    min-height: 120px;
+    resize: vertical;
+    border: 1px solid var(--line-strong);
+    background: var(--surface-2);
+    border-radius: 8px;
+    padding: 0.65rem 0.75rem;
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 0.92rem;
+    line-height: 1.5;
+  }
+  .notes-body textarea::placeholder { color: var(--ink-soft); }
+
+  /* ---------- main ---------- */
+  .day-main { display: flex; flex-direction: column; gap: 1.75rem; min-width: 0; }
+  .day-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+  .day-head h2 { font-size: clamp(1.3rem, 2.4vw, 1.7rem); }
+  .day-head .day-sub { color: var(--ink-soft); font-size: 0.88rem; display: flex; align-items: center; gap: 0.75rem; padding-top: 0.3rem; }
+  .day-head-text { display: flex; flex-direction: column; gap: 0.35rem; min-width: 0; }
+  .day-title-row { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
+  .day-title-row.editing input[type="text"] {
+    border: 1px solid var(--line-strong);
+    background: var(--surface);
+    border-radius: 8px;
+    padding: 0.4rem 0.6rem;
+    color: var(--ink);
+    font-family: "Besley", ui-serif, Georgia, serif;
+    font-size: 1.1rem;
+    min-width: 180px;
+  }
+  .day-title-badge {
+    display: inline-block;
+    background: var(--accent);
+    color: var(--accent-ink);
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+  }
+  .today-pill {
+    font-size: 0.68rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 700;
+  }
+  .text-btn {
+    border: none;
+    background: none;
+    color: var(--ink-soft);
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 0.2rem 0;
+    text-decoration: underline;
+    text-decoration-color: transparent;
+  }
+  .text-btn:hover { color: var(--danger); text-decoration-color: var(--danger); }
+
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.1rem 1.25rem 0.9rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .panel-head h3 { font-size: 1.05rem; }
+  .panel-head .count-pill {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.72rem;
+    color: var(--ink-soft);
+    background: var(--surface-2);
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+  }
+
+  /* ---------- timeline ---------- */
+  .timeline { list-style: none; margin: 0; padding: 0.4rem 1.25rem 0.5rem; }
+  .timeline li {
+    display: grid;
+    grid-template-columns: 4.6rem 1fr auto;
+    gap: 0.85rem;
+    align-items: start;
+    padding: 0.85rem 0;
+    border-top: 1px dashed var(--line);
+    position: relative;
+  }
+  .timeline li:first-child { border-top: none; }
+  .timeline time {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--accent);
+    padding-top: 0.15rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .ev-title { font-weight: 600; font-size: 0.96rem; }
+  .ev-notes { color: var(--ink-soft); font-size: 0.86rem; margin-top: 0.2rem; }
+  .row-actions { display: flex; gap: 0.3rem; }
+  .icon-btn {
+    width: 26px; height: 26px;
+    border-radius: 7px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--ink-soft);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.85rem;
+    flex: none;
+  }
+  .icon-btn:hover { background: var(--surface-2); color: var(--danger); border-color: var(--line); }
+  .empty-note { padding: 1.4rem 1.25rem; color: var(--ink-soft); font-size: 0.9rem; font-style: italic; }
+
+  /* ---------- inline edit mode ---------- */
+  .timeline li.editing, .todo-list li.editing {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .timeline li.editing input[type="text"], .todo-list li.editing input[type="text"] {
+    border: 1px solid var(--line-strong);
+    background: var(--surface);
+    border-radius: 8px;
+    padding: 0.4rem 0.55rem;
+    color: var(--ink);
+    min-width: 0;
+    flex: 1;
+  }
+  .timeline li.editing .edit-title { flex: 1 1 140px; }
+  .timeline li.editing .edit-notes { flex: 1 1 140px; }
+  .edit-actions { display: flex; gap: 0.35rem; flex: none; }
+  .mini-btn {
+    border: none;
+    border-radius: 7px;
+    padding: 0.4rem 0.7rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+  }
+  .mini-btn.save { background: var(--accent); color: var(--accent-ink); }
+  .mini-btn.cancel { background: var(--surface-2); color: var(--ink-soft); border: 1px solid var(--line-strong); }
+
+  /* ---------- drag to copy to-dos ---------- */
+  .todo-drag-handle {
+    border: none;
+    background: none;
+    color: var(--ink-soft);
+    cursor: grab;
+    touch-action: none;
+    padding: 0 0.15rem;
+    flex: none;
+    font-size: 0.95rem;
+    line-height: 1;
+    letter-spacing: -2px;
+  }
+  .todo-drag-handle:hover { color: var(--accent); }
+  .todo-drag-handle:active { cursor: grabbing; }
+  .todo-ghost {
+    position: fixed;
+    z-index: 200;
+    transform: translate(-50%, -50%);
+    background: var(--surface);
+    border: 1px solid var(--accent);
+    color: var(--ink);
+    padding: 0.5rem 0.8rem;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    font-size: 0.88rem;
+    max-width: 220px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  .day-tab.drop-target {
+    background: var(--accent-soft);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px var(--accent) inset;
+  }
+
+  .add-row {
+    display: grid;
+    grid-template-columns: 9.5rem 1fr 1fr auto;
+    grid-template-areas:
+      "time title notes button"
+      "tags tags tags tags";
+    gap: 0.6rem;
+    padding: 0.9rem 1.25rem 1.15rem;
+    border-top: 1px solid var(--line);
+    background: var(--surface-2);
+  }
+  .add-row .time-field { grid-area: time; }
+  .add-row #newEvTitle { grid-area: title; }
+  .add-row #newEvNotes { grid-area: notes; }
+  .add-row #addEventBtn { grid-area: button; }
+  .add-row .tags-input { grid-area: tags; }
+  @media (max-width: 560px) {
+    .add-row {
+      grid-template-columns: 1fr 1fr;
+      grid-template-areas:
+        "time time"
+        "title notes"
+        "tags tags"
+        "button button";
+    }
+  }
+  .add-row input {
+    border: 1px solid var(--line-strong);
+    background: var(--surface);
+    border-radius: 8px;
+    padding: 0.5rem 0.6rem;
+    color: var(--ink);
+    min-width: 0;
+  }
+  .add-row input::placeholder { color: var(--ink-soft); }
+
+  /* ---------- tags & filtering ---------- */
+  .filter-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    padding: 0 1.25rem 1rem;
+  }
+  .filter-pill {
+    padding: 0.3rem 0.75rem;
+    border-radius: 999px;
+    border: 1.5px solid var(--line-strong);
+    background: var(--surface);
+    color: var(--ink-soft);
+    font-size: 0.76rem;
+    font-weight: 700;
+  }
+  .filter-pill:hover { border-color: var(--tag-color, var(--accent)); color: var(--tag-color, var(--accent)); }
+  .filter-pill.active {
+    background: var(--tag-color, var(--accent));
+    border-color: var(--tag-color, var(--accent));
+    color: #fff;
+  }
+  .ev-tags { display: flex; gap: 0.3rem; flex-wrap: wrap; margin-top: 0.35rem; }
+  .tag-chip {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    padding: 0.1rem 0.5rem;
+    border-radius: 999px;
+    border: 1px solid var(--tag-color, var(--line-strong));
+    color: var(--tag-color, var(--ink-soft));
+    background: color-mix(in srgb, var(--tag-color, var(--ink-soft)) 14%, transparent);
+    white-space: nowrap;
+  }
+  .edit-tags { flex: 1 1 160px; }
+  .time-field { display: flex; gap: 0.35rem; min-width: 0; }
+  .time-field select {
+    border: 1px solid var(--line-strong);
+    background: var(--surface);
+    border-radius: 8px;
+    padding: 0.5rem 0.4rem;
+    color: var(--ink);
+    min-width: 0;
+    flex: 1;
+  }
+  .add-row button {
+    border: none;
+    background: var(--accent);
+    color: var(--accent-ink);
+    border-radius: 8px;
+    padding: 0.5rem 0.9rem;
+    font-weight: 600;
+    font-size: 0.85rem;
+  }
+
+  /* ---------- todos ---------- */
+  .todo-list { list-style: none; margin: 0; padding: 0.4rem 1.25rem 0.5rem; }
+  .todo-list li {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.6rem 0;
+    border-top: 1px dashed var(--line);
+  }
+  .todo-list li:first-child { border-top: none; }
+  .todo-check {
+    width: 20px; height: 20px;
+    border-radius: 6px;
+    border: 1.5px solid var(--line-strong);
+    background: var(--surface);
+    flex: none;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--accent-ink);
+  }
+  .todo-check.done { background: var(--done); border-color: var(--done); }
+  .todo-text { flex: 1; font-size: 0.92rem; min-width: 0; overflow-wrap: anywhere; }
+  .todo-text.done { color: var(--ink-soft); text-decoration: line-through; }
+  .todo-add {
+    display: flex;
+    gap: 0.6rem;
+    padding: 0.9rem 1.25rem 1.15rem;
+    border-top: 1px solid var(--line);
+    background: var(--surface-2);
+  }
+  .todo-add input {
+    flex: 1;
+    border: 1px solid var(--line-strong);
+    background: var(--surface);
+    border-radius: 8px;
+    padding: 0.5rem 0.65rem;
+    color: var(--ink);
+    min-width: 0;
+  }
+  .todo-add button {
+    border: none;
+    background: var(--accent);
+    color: var(--accent-ink);
+    border-radius: 8px;
+    padding: 0.5rem 0.9rem;
+    font-weight: 600;
+    font-size: 0.85rem;
+    flex: none;
+  }
+
+  footer.note {
+    margin-top: 2.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--line);
+    color: var(--ink-soft);
+    font-size: 0.82rem;
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <header class="topbar">
+    <div>
+      <span class="eyebrow" id="eyebrowRange">&nbsp;</span>
+      <h1>Wedding Run Sheet</h1>
+    </div>
+    <div class="topbar-actions">
+      <span class="sync-status" id="syncStatus"><span class="sync-dot"></span><span id="syncLabel">Saved on this device</span></span>
+      <button class="btn btn-primary" id="exportBtn">Export to Excel</button>
+    </div>
+  </header>
+
+  <div class="add-day-panel" id="addDayPanel" hidden>
+    <label for="newDayDate" class="add-day-label">Add a day to the plan</label>
+    <input type="date" id="newDayDate" aria-label="New day date">
+    <button class="btn btn-primary" id="confirmAddDayBtn">Add day</button>
+    <button class="btn" id="cancelAddDayBtn">Cancel</button>
+  </div>
+
+  <div class="layout">
+    <nav class="day-rail" id="dayRail" aria-label="Choose a day"></nav>
+    <main class="day-main" id="dayMain"></main>
+  </div>
+
+  <footer class="note">Private run sheet. Saved in this browser only &mdash; each device keeps its own copy, so export to Excel to share a snapshot. Added or removed a day by mistake? Press &#8984;Z to undo.</footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+(function () {
+  var FLAG = "wrs:migration-2026-excel-pdf-import";
+  if (localStorage.getItem(FLAG)) return;
+  try {
+    var DATA = {"daysList": ["2026-10-31", "2026-11-01", "2026-11-16", "2026-11-17", "2026-11-18", "2026-11-19", "2026-11-20", "2026-11-21", "2026-11-22", "2026-11-23", "2026-11-24"], "days": {"2026-10-31": {"timeline": [{"id": "imp-2026-10-31-1", "time": "03:45", "title": "Wake up & prep", "notes": "", "tags": []}, {"id": "imp-2026-10-31-2", "time": "04:30", "title": "Head to Terminal 1", "notes": "", "tags": []}, {"id": "imp-2026-10-31-3", "time": "06:45", "title": "Flight to Ipoh", "notes": "Terminal 1. WYD5XP", "tags": []}, {"id": "imp-2026-10-31-4", "time": "14:30", "title": "Test videos at M roof", "notes": "Also check the table on magazine placement", "tags": []}], "todos": [{"id": "impt-2026-10-31-1", "text": "Test Videos at M Roof", "done": false}, {"id": "impt-2026-10-31-2", "text": "Decorate room for Guo Da Li", "done": false}, {"id": "impt-2026-10-31-3", "text": "Purchase bedsheet for Wedding", "done": false}, {"id": "impt-2026-10-31-4", "text": "Pre-pack Angpaos", "done": false}, {"id": "impt-2026-10-31-5", "text": "Paste the 'XI' word on Guo Da Li items", "done": false}, {"id": "impt-2026-10-31-6", "text": "Look through how to place wedding magazine with door gift on the table at M Roof", "done": false}, {"id": "impt-2026-10-31-7", "text": "Buy Belt and pants for Didi", "done": false}, {"id": "impt-2026-10-31-8", "text": "Find a place to buy roasted pork", "done": false}, {"id": "impt-2026-10-31-9", "text": "Find a place to buy chicken", "done": false}, {"id": "impt-2026-10-31-10", "text": "Find a place to buy oranges, apples & Fa Gao", "done": false}, {"id": "impt-2026-10-31-11", "text": "Plan where to eat on 20th Lunch & Dinner and 23rd Dinner", "done": false}, {"id": "impt-2026-10-31-12", "text": "Order cake for JL's Mom birthday", "done": false}, {"id": "impt-2026-10-31-13", "text": "Buy honey", "done": false}, {"id": "impt-2026-10-31-14", "text": "Buy orange juice", "done": false}, {"id": "impt-2026-10-31-15", "text": "Buy Dragon and Phoenix candles (龙凤烛)", "done": false}, {"id": "impt-2026-10-31-16", "text": "Buy Bedside lamps x1 pair (床头灯 x1对)", "done": false}, {"id": "impt-2026-10-31-17", "text": "Buy Five grains (五谷)", "done": false}], "title": "", "notes": ""}, "2026-11-01": {"timeline": [], "todos": [{"id": "impt-2026-11-01-1", "text": "Decorate room for Guo Da Li", "done": false}, {"id": "impt-2026-11-01-2", "text": "Purchase bedsheet for Wedding", "done": false}, {"id": "impt-2026-11-01-3", "text": "Pre-pack Angpaos", "done": false}, {"id": "impt-2026-11-01-4", "text": "Paste the 'XI' word on Guo Da Li items", "done": false}, {"id": "impt-2026-11-01-5", "text": "Buy Belt and pants for Didi", "done": false}, {"id": "impt-2026-11-01-6", "text": "Find a place to buy roasted pork", "done": false}, {"id": "impt-2026-11-01-7", "text": "Find a place to buy chicken", "done": false}, {"id": "impt-2026-11-01-8", "text": "Find a place to buy oranges, apples & Fa Gao", "done": false}, {"id": "impt-2026-11-01-9", "text": "Plan where to eat on 20th Lunch & Dinner and 23rd Dinner", "done": false}, {"id": "impt-2026-11-01-10", "text": "Order cake for JL's Mom birthday", "done": false}, {"id": "impt-2026-11-01-11", "text": "Buy honey", "done": false}, {"id": "impt-2026-11-01-12", "text": "Buy orange juice", "done": false}, {"id": "impt-2026-11-01-13", "text": "Buy Dragon and Phoenix candles (龙凤烛)", "done": false}, {"id": "impt-2026-11-01-14", "text": "Buy Bedside lamps x1 pair (床头灯 x1对)", "done": false}, {"id": "impt-2026-11-01-15", "text": "Buy Five grains (五谷)", "done": false}], "title": "", "notes": ""}, "2026-11-16": {"timeline": [{"id": "imp-2026-11-16-1", "time": "16:00", "title": "Flight to Ipoh from Johor", "notes": "", "tags": []}], "todos": [], "title": "", "notes": ""}, "2026-11-17": {"timeline": [], "todos": [], "title": "", "notes": ""}, "2026-11-18": {"timeline": [], "todos": [{"id": "impt-2026-11-18-1", "text": "Pre-buy souvenirs for guests", "done": false}], "title": "", "notes": ""}, "2026-11-19": {"timeline": [], "todos": [{"id": "impt-2026-11-19-1", "text": "Pre-buy souvenirs for guests", "done": false}], "title": "", "notes": "Parent's flight will reach Ipoh 16:25pm."}, "2026-11-20": {"timeline": [], "todos": [], "title": "Guo Da Li", "notes": ""}, "2026-11-21": {"timeline": [], "todos": [{"id": "impt-2026-11-21-1", "text": "Set up souvenirs for guests at their Airbnb", "done": false}, {"id": "impt-2026-11-21-2", "text": "Collect wedding car", "done": false}, {"id": "impt-2026-11-21-3", "text": "Tie flowers to car", "done": false}], "title": "", "notes": ""}, "2026-11-22": {"timeline": [{"id": "imp-2026-11-21-1", "time": "04:30", "title": "Wake and buy breakfast", "notes": "Where?", "tags": ["JL"]}, {"id": "imp-2026-11-21-2", "time": "05:30", "title": "Breakfast", "notes": "", "tags": ["JL"]}, {"id": "imp-2026-11-21-3", "time": "06:00", "title": "Change clothes", "notes": "", "tags": ["JL"]}, {"id": "imp-2026-11-21-4", "time": "06:30", "title": "Collect roasted pork", "notes": "", "tags": ["JL"]}, {"id": "imp-2026-11-21-5", "time": "07:30", "title": "Head to Ejean's house with Brothers and Dai Kum Jie", "notes": "Might have some of the kids and families joining as well", "tags": ["JL"]}, {"id": "imp-2026-11-21-6", "time": "08:00", "title": "Lion dance", "notes": "", "tags": []}, {"id": "imp-2026-11-21-7", "time": "08:30", "title": "Ying qu & Tea ceremony", "notes": "", "tags": []}, {"id": "imp-2026-11-21-8", "time": "11:00", "title": "Head back to JL's Airbnb", "notes": "Exit w red umbrella and fan, bring along tea pot, bring alot roasted pork", "tags": []}, {"id": "imp-2026-11-21-9", "time": "11:30", "title": "Tea ceremony", "notes": "", "tags": []}, {"id": "imp-2026-11-21-10", "time": "12:15", "title": "Photo taking and lunch", "notes": "", "tags": []}, {"id": "imp-2026-11-21-11", "time": "13:30", "title": "Head to hotel", "notes": "Prep self at hotel", "tags": []}, {"id": "imp-2026-11-21-12", "time": "14:00", "title": "Make up", "notes": "JL go buy food, coordinate family", "tags": ["Ejean"]}, {"id": "imp-2026-11-21-13", "time": "17:00", "title": "Rehearsal", "notes": "", "tags": []}, {"id": "imp-2026-11-21-14", "time": "17:30", "title": "First look", "notes": "", "tags": []}, {"id": "imp-2026-11-21-15", "time": "18:00", "title": "Cocktail session", "notes": "", "tags": []}, {"id": "pdf-2026-11-22-16", "time": "14:00", "title": "Make Up", "notes": "", "tags": ["Make Up Artist"]}, {"id": "pdf-2026-11-22-17", "time": "17:00", "title": "All props and laptop set up by coordinator", "notes": "LED display screen during whole event", "tags": ["Coordinator"]}, {"id": "pdf-2026-11-22-18", "time": "17:00", "title": "All video files ready / testing", "notes": "", "tags": ["Hotel Crew"]}, {"id": "pdf-2026-11-22-19", "time": "17:00", "title": "Emcee sound check & briefing with all p.i.c", "notes": "", "tags": ["Emcee", "Hotel Manager"]}, {"id": "pdf-2026-11-22-20", "time": "17:00", "title": "Rehearsal", "notes": "", "tags": ["Couple", "flower girl"]}, {"id": "pdf-2026-11-22-21", "time": "17:30", "title": "First look", "notes": "", "tags": ["Photographer"]}, {"id": "pdf-2026-11-22-22", "time": "18:00", "title": "Cocktail Session", "notes": "", "tags": ["Hotel"]}, {"id": "pdf-2026-11-22-23", "time": "18:00", "title": "Couple welcomes guests", "notes": "", "tags": []}, {"id": "pdf-2026-11-22-24", "time": "19:05", "title": "Restaurant Manager to inform kitchen for food fire (30 minutes before food serve)", "notes": "Dinner to start upon 80% attendance, confirm with coordinator", "tags": ["Emcee", "Coordinator"]}, {"id": "pdf-2026-11-22-25", "time": "19:30", "title": "Emcee Opening Speech", "notes": "Guests from Singapore, Johor Bahru & Ipoh", "tags": ["Emcee"]}, {"id": "pdf-2026-11-22-26", "time": "19:30", "title": "Flower girls (2-6 dancers)", "notes": "Background Music: Enchanted by Joseph Willian Morgan (instrumental)", "tags": ["Hotel Crew"]}, {"id": "pdf-2026-11-22-27", "time": "19:30", "title": "Couple march in", "notes": "", "tags": []}, {"id": "pdf-2026-11-22-28", "time": "19:30", "title": "Cake Cutting", "notes": "", "tags": []}, {"id": "pdf-2026-11-22-29", "time": "19:30", "title": "Dinner commences", "notes": "No food presentation", "tags": ["Emcee"]}, {"id": "pdf-2026-11-22-30", "time": "19:30", "title": "Pre-wedding photo slideshow", "notes": "", "tags": ["Hotel Crew"]}, {"id": "pdf-2026-11-22-31", "time": "19:30", "title": "Bride to change gown after the 1st dish", "notes": "", "tags": []}, {"id": "pdf-2026-11-22-32", "time": "19:30", "title": "Lucky Draw (5 pax) with angpao (gift)", "notes": "Randomly pick", "tags": []}, {"id": "pdf-2026-11-22-33", "time": "20:30", "title": "Childhood/ Lovestory photo slideshow", "notes": "", "tags": ["Hotel Crew"]}, {"id": "pdf-2026-11-22-34", "time": "20:30", "title": "2nd Couple March In - First dance (less than 3 minutes)", "notes": "Background Music: La Valse de L’Amour (first dance)", "tags": ["Hotel Crew"]}, {"id": "pdf-2026-11-22-35", "time": "20:30", "title": "Champagne Popping & Fountain, Cross Arm Toast", "notes": "Champagne, Champagne glasses prepared", "tags": ["Emcee", "Hotel Crew"]}, {"id": "pdf-2026-11-22-36", "time": "20:30", "title": "Yum Seng Ceremony", "notes": "1st toast: Groom's father | 2nd toast: Bride's | 3rd toast: Groom | Groom side: ___ | Bride side: ___", "tags": []}, {"id": "pdf-2026-11-22-37", "time": "20:30", "title": "Morning Session - Actual Day photo video", "notes": "", "tags": ["Hotel Crew"]}, {"id": "pdf-2026-11-22-38", "time": "20:30", "title": "Bingo Game (5 angpao with cash RM18/28/38/88)", "notes": "Can announce the amount", "tags": ["Emcee"]}, {"id": "pdf-2026-11-22-39", "time": "20:30", "title": "Lucky Draw (5 pax) 1st chosen by couple", "notes": "", "tags": []}, {"id": "pdf-2026-11-22-40", "time": "21:15", "title": "Couple go each table take photo and yum seng", "notes": "", "tags": []}, {"id": "pdf-2026-11-22-41", "time": "22:00", "title": "Couple standby for guest departure (at start of dessert)", "notes": "", "tags": []}, {"id": "pdf-2026-11-22-42", "time": "22:00", "title": "Dinner Ends. Emcee Closing", "notes": "", "tags": ["Emcee"]}], "todos": [{"id": "impt-2026-11-22-1", "text": "Collect Roasted Pork", "done": false}], "title": "Wedding day", "notes": "Full planning of Wedding flow at https://drive.google.com/file/d/1wXP6mzNaoDeoBfKsfehVpqCY2Q20JNJ4/view"}, "2026-11-23": {"timeline": [], "todos": [], "title": "Mom's birthday", "notes": "Birthday dinner with mom"}, "2026-11-24": {"timeline": [], "todos": [], "title": "", "notes": ""}}};
+    Object.keys(DATA.days).forEach(function (iso) {
+      localStorage.setItem("wrs:" + iso, JSON.stringify(DATA.days[iso]));
+    });
+    localStorage.setItem("wrs:days-list", JSON.stringify(DATA.daysList));
+    localStorage.setItem(FLAG, "1");
+  } catch (e) {}
+})();
+</script>
+<script>
+(function () {
+  "use strict";
+
+  var DAYS_LIST_KEY = "wrs:days-list";
+
+  function isoOf(d) {
+    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+  }
+  function isoToDate(iso) {
+    var parts = iso.split("-").map(Number);
+    return new Date(parts[0], parts[1] - 1, parts[2]);
+  }
+  function isoToDayMeta(iso) {
+    var d = isoToDate(iso);
+    return {
+      iso: iso,
+      dow: d.toLocaleDateString(undefined, { weekday: "short" }),
+      dowFull: d.toLocaleDateString(undefined, { weekday: "long" }),
+      dayNum: d.getDate(),
+      monthFull: d.toLocaleDateString(undefined, { month: "long" }),
+      monthShort: d.toLocaleDateString(undefined, { month: "short" })
+    };
+  }
+  function defaultDaysList() {
+    var list = [];
+    for (var i = 0; i < 9; i++) list.push(isoOf(new Date(2026, 10, 16 + i)));
+    return list;
+  }
+  function loadDaysList() {
+    try {
+      var raw = localStorage.getItem(DAYS_LIST_KEY);
+      if (raw) return JSON.parse(raw);
+    } catch (e) {}
+    var def = defaultDaysList();
+    saveDaysList(def);
+    return def;
+  }
+  function saveDaysList(list) {
+    try { localStorage.setItem(DAYS_LIST_KEY, JSON.stringify(list)); } catch (e) {}
+  }
+  function rebuildDays() {
+    DAYS = loadDaysList().slice().sort().map(isoToDayMeta);
+  }
+
+  var DAYS = loadDaysList().slice().sort().map(isoToDayMeta);
+
+  // ---------- undo stack (day add/remove only) ----------
+  var undoStack = [];
+  function pushUndo(undoFn) {
+    undoStack.push(undoFn);
+    if (undoStack.length > 20) undoStack.shift();
+  }
+  document.addEventListener("keydown", function (e) {
+    var isUndo = (e.metaKey || e.ctrlKey) && !e.shiftKey && (e.key === "z" || e.key === "Z");
+    if (!isUndo) return;
+    var tag = document.activeElement && document.activeElement.tagName;
+    if (tag === "INPUT" || tag === "TEXTAREA" || (document.activeElement && document.activeElement.isContentEditable)) return;
+    if (!undoStack.length) return;
+    e.preventDefault();
+    var fn = undoStack.pop();
+    fn();
+  });
+  var todayIso = (function () {
+    var t = new Date();
+    return t.getFullYear() + "-" + String(t.getMonth() + 1).padStart(2, "0") + "-" + String(t.getDate()).padStart(2, "0");
+  })();
+
+  var state = {
+    selected: DAYS[0].iso,
+    data: {}   // iso -> { timeline: [...], todos: [...] }
+  };
+  var editingEventId = null;
+  var editingTodoId = null;
+  var editingDayTitle = false;
+  var activeFilter = null; // null = "All"; otherwise a tag name
+
+  function emptyDay() { return { timeline: [], todos: [], title: "", notes: "" }; }
+  function getDay(iso) { return state.data[iso] || emptyDay(); }
+
+  function uid() {
+    return (window.crypto && crypto.randomUUID ? crypto.randomUUID() : (Date.now() + "-" + Math.random().toString(16).slice(2)));
+  }
+
+  function formatTime(hhmm) {
+    if (!hhmm) return "";
+    var parts = hhmm.split(":");
+    var h = parseInt(parts[0], 10);
+    var m = parts[1];
+    var suffix = h >= 12 ? "PM" : "AM";
+    var h12 = h % 12; if (h12 === 0) h12 = 12;
+    return h12 + ":" + m + suffix.toLowerCase();
+  }
+
+  function hourOptionsHtml(selected) {
+    var out = "";
+    for (var h = 0; h < 24; h++) {
+      var val = String(h).padStart(2, "0");
+      var suffix = h >= 12 ? "PM" : "AM";
+      var h12 = h % 12; if (h12 === 0) h12 = 12;
+      out += '<option value="' + val + '"' + (val === selected ? " selected" : "") + '>' + h12 + " " + suffix + "</option>";
+    }
+    return out;
+  }
+  function minuteOptionsHtml(selected) {
+    return ["00", "15", "30", "45"].map(function (m) {
+      return '<option value="' + m + '"' + (m === selected ? " selected" : "") + '>:' + m + "</option>";
+    }).join("");
+  }
+
+  // ---------- persistence (per-device, localStorage) ----------
+
+  function localKey(iso) { return "wrs:" + iso; }
+
+  function loadLocal(iso) {
+    try {
+      var raw = localStorage.getItem(localKey(iso));
+      return raw ? JSON.parse(raw) : emptyDay();
+    } catch (e) { return emptyDay(); }
+  }
+
+  function persist(iso) {
+    var day = getDay(iso);
+    try { localStorage.setItem(localKey(iso), JSON.stringify(day)); } catch (e) {}
+    renderRail();
+    if (state.selected === iso) renderMain();
+  }
+
+  // ---------- mutations ----------
+
+  function snapTo15(hhmm) {
+    var parts = (hhmm || "00:00").split(":");
+    var h = parseInt(parts[0], 10) || 0;
+    var m = parseInt(parts[1], 10) || 0;
+    m = Math.round(m / 15) * 15;
+    if (m === 60) { m = 0; h = (h + 1) % 24; }
+    return String(h).padStart(2, "0") + ":" + String(m).padStart(2, "0");
+  }
+
+  function parseTags(raw) {
+    return (raw || "").split(",").map(function (t) { return t.trim(); }).filter(function (t) { return t; });
+  }
+  function tagHue(name) {
+    var h = 0;
+    for (var i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) % 360;
+    return h < 0 ? h + 360 : h;
+  }
+  function tagColor(name) { return "hsl(" + tagHue(name) + "deg 62% 44%)"; }
+
+  function addEvent(iso, time, title, notes, tagsRaw) {
+    if (!title.trim()) return;
+    var day = getDay(iso);
+    day.timeline = day.timeline.concat([{ id: uid(), time: snapTo15(time), title: title.trim(), notes: notes.trim(), tags: parseTags(tagsRaw) }]);
+    state.data[iso] = day;
+    persist(iso);
+  }
+  function removeEvent(iso, id) {
+    var day = getDay(iso);
+    day.timeline = day.timeline.filter(function (e) { return e.id !== id; });
+    state.data[iso] = day;
+    persist(iso);
+  }
+  function updateEvent(iso, id, time, title, notes, tagsRaw) {
+    var day = getDay(iso);
+    day.timeline = day.timeline.map(function (e) {
+      return e.id === id ? { id: id, time: snapTo15(time), title: title.trim(), notes: notes.trim(), tags: parseTags(tagsRaw) } : e;
+    });
+    state.data[iso] = day;
+    persist(iso);
+  }
+  function addTodo(iso, text) {
+    if (!text.trim()) return;
+    var day = getDay(iso);
+    day.todos = day.todos.concat([{ id: uid(), text: text.trim(), done: false }]);
+    state.data[iso] = day;
+    persist(iso);
+  }
+  function toggleTodo(iso, id) {
+    var day = getDay(iso);
+    day.todos = day.todos.map(function (t) { return t.id === id ? Object.assign({}, t, { done: !t.done }) : t; });
+    state.data[iso] = day;
+    persist(iso);
+  }
+  function updateTodo(iso, id, text) {
+    var day = getDay(iso);
+    day.todos = day.todos.map(function (t) {
+      return t.id === id ? Object.assign({}, t, { text: text.trim() }) : t;
+    });
+    state.data[iso] = day;
+    persist(iso);
+  }
+  function removeTodo(iso, id) {
+    var day = getDay(iso);
+    day.todos = day.todos.filter(function (t) { return t.id !== id; });
+    state.data[iso] = day;
+    persist(iso);
+  }
+  function copyTodoToDay(sourceIso, todoId, targetIso) {
+    var sourceDay = getDay(sourceIso);
+    var item = sourceDay.todos.find(function (t) { return t.id === todoId; });
+    if (!item) return;
+    var targetDay = getDay(targetIso);
+    targetDay.todos = targetDay.todos.concat([{ id: uid(), text: item.text, done: false }]);
+    state.data[targetIso] = targetDay;
+    persist(targetIso);
+  }
+
+  // ---------- drag a to-do onto a day tab to copy it there ----------
+
+  var dragState = null;
+
+  function positionGhost(ghost, x, y) {
+    ghost.style.left = x + "px";
+    ghost.style.top = y + "px";
+  }
+  function findDayTabAt(x, y) {
+    var els = document.elementsFromPoint(x, y);
+    for (var i = 0; i < els.length; i++) {
+      if (els[i].classList && els[i].classList.contains("day-tab") && !els[i].classList.contains("add-tab")) {
+        return els[i];
+      }
+    }
+    return null;
+  }
+  function startTodoDrag(e, sourceIso, todoId, text) {
+    e.preventDefault();
+    var ghost = document.createElement("div");
+    ghost.className = "todo-ghost";
+    ghost.textContent = text;
+    document.body.appendChild(ghost);
+    positionGhost(ghost, e.clientX, e.clientY);
+    dragState = { todoId: todoId, sourceIso: sourceIso, ghostEl: ghost };
+    document.addEventListener("pointermove", onTodoDragMove);
+    document.addEventListener("pointerup", onTodoDragEnd);
+    document.addEventListener("pointercancel", onTodoDragEnd);
+  }
+  function onTodoDragMove(e) {
+    if (!dragState) return;
+    positionGhost(dragState.ghostEl, e.clientX, e.clientY);
+    var tab = findDayTabAt(e.clientX, e.clientY);
+    dayRail.querySelectorAll(".day-tab.drop-target").forEach(function (t) { t.classList.remove("drop-target"); });
+    if (tab) tab.classList.add("drop-target");
+  }
+  function onTodoDragEnd(e) {
+    if (!dragState) return;
+    var tab = findDayTabAt(e.clientX, e.clientY);
+    dayRail.querySelectorAll(".day-tab.drop-target").forEach(function (t) { t.classList.remove("drop-target"); });
+    if (tab) {
+      var targetIso = tab.getAttribute("data-iso");
+      if (targetIso) copyTodoToDay(dragState.sourceIso, dragState.todoId, targetIso);
+    }
+    dragState.ghostEl.remove();
+    document.removeEventListener("pointermove", onTodoDragMove);
+    document.removeEventListener("pointerup", onTodoDragEnd);
+    document.removeEventListener("pointercancel", onTodoDragEnd);
+    dragState = null;
+  }
+
+  // ---------- day add/remove ----------
+
+  function addDay(iso) {
+    if (!iso) return;
+    var list = loadDaysList();
+    if (list.indexOf(iso) !== -1) {
+      state.selected = iso;
+      renderRail();
+      renderMain();
+      return;
+    }
+    list.push(iso);
+    saveDaysList(list);
+    rebuildDays();
+    state.selected = iso;
+    state.data[iso] = loadLocal(iso);
+    editingEventId = null;
+    editingTodoId = null;
+    editingDayTitle = false;
+    activeFilter = null;
+
+    pushUndo(function () {
+      var l2 = loadDaysList().filter(function (x) { return x !== iso; });
+      saveDaysList(l2);
+      rebuildDays();
+      if (state.selected === iso) state.selected = DAYS.length ? DAYS[0].iso : null;
+      renderRail();
+      renderMain();
+    });
+
+    renderRail();
+    renderMain();
+  }
+
+  function updateDayTitle(iso, title) {
+    var day = getDay(iso);
+    day.title = title.trim();
+    state.data[iso] = day;
+    persist(iso);
+  }
+
+  // Saves on every keystroke without re-rendering (persist()/renderMain() would
+  // blow away focus and cursor position mid-type).
+  function saveDayNotesQuiet(iso, notes) {
+    var day = getDay(iso);
+    day.notes = notes;
+    state.data[iso] = day;
+    try { localStorage.setItem(localKey(iso), JSON.stringify(day)); } catch (e) {}
+  }
+
+  function removeDay(iso) {
+    var d = DAYS.find(function (x) { return x.iso === iso; });
+    if (!d) return;
+    if (DAYS.length <= 1) { alert("You need at least one day in the plan."); return; }
+    var label = d.dowFull + ", " + d.dayNum + " " + d.monthFull;
+    var ok = confirm("Remove " + label + " from the plan?\n\nYou can undo this with ⌘Z (Ctrl+Z on Windows).");
+    if (!ok) return;
+
+    var list = loadDaysList().filter(function (x) { return x !== iso; });
+    saveDaysList(list);
+    rebuildDays();
+    if (state.selected === iso) { state.selected = DAYS.length ? DAYS[0].iso : null; editingEventId = null; editingTodoId = null; editingDayTitle = false; activeFilter = null; }
+
+    pushUndo(function () {
+      var l2 = loadDaysList();
+      if (l2.indexOf(iso) === -1) l2.push(iso);
+      saveDaysList(l2);
+      rebuildDays();
+      state.selected = iso;
+      editingEventId = null;
+      editingTodoId = null;
+      editingDayTitle = false;
+      activeFilter = null;
+      renderRail();
+      renderMain();
+    });
+
+    renderRail();
+    renderMain();
+  }
+
+  // ---------- render ----------
+
+  var dayRail = document.getElementById("dayRail");
+  var dayMain = document.getElementById("dayMain");
+  var exportBtn = document.getElementById("exportBtn");
+  var addDayPanel = document.getElementById("addDayPanel");
+  var newDayDate = document.getElementById("newDayDate");
+  var eyebrowRange = document.getElementById("eyebrowRange");
+
+  function renderEyebrow() {
+    if (!DAYS.length) { eyebrowRange.innerHTML = "&nbsp;"; return; }
+    var first = DAYS[0], last = DAYS[DAYS.length - 1];
+    if (first.iso === last.iso) {
+      eyebrowRange.textContent = first.dayNum + " " + first.monthFull;
+    } else if (first.monthFull === last.monthFull) {
+      eyebrowRange.textContent = first.dayNum + "–" + last.dayNum + " " + first.monthFull;
+    } else {
+      eyebrowRange.textContent = first.dayNum + " " + first.monthShort + " – " + last.dayNum + " " + last.monthShort;
+    }
+  }
+
+  function renderRail() {
+    renderEyebrow();
+    dayRail.innerHTML = "";
+    DAYS.forEach(function (d) {
+      var day = getDay(d.iso);
+      var openCount = day.timeline.length;
+      var todoLeft = day.todos.filter(function (t) { return !t.done; }).length;
+      var btn = document.createElement("button");
+      btn.className = "day-tab" + (state.selected === d.iso ? " active" : "");
+      btn.setAttribute("aria-current", state.selected === d.iso ? "true" : "false");
+      btn.setAttribute("data-iso", d.iso);
+      btn.innerHTML =
+        '<span class="num mono">' + d.dayNum + '</span>' +
+        '<span class="meta">' +
+          '<span class="dow">' + d.dow + '</span>' +
+          (day.title ? '<span class="tab-title">' + escapeHtml(day.title) + '</span>' : '') +
+          '<span class="counts mono">' + (openCount ? openCount + ' event' + (openCount === 1 ? '' : 's') : '&ndash;') + (todoLeft ? ' &middot; ' + todoLeft + ' to-do' + (todoLeft === 1 ? '' : 's') : '') + '</span>' +
+          (d.iso === todayIso ? '<span class="today-flag">Today</span>' : '') +
+        '</span>';
+      btn.addEventListener("click", function () {
+        state.selected = d.iso;
+        editingEventId = null;
+        editingTodoId = null;
+        editingDayTitle = false;
+        activeFilter = null;
+        renderRail();
+        renderMain();
+      });
+      dayRail.appendChild(btn);
+    });
+    var addBtn = document.createElement("button");
+    addBtn.className = "day-tab add-tab";
+    addBtn.id = "addDayBtn";
+    addBtn.setAttribute("aria-label", "Add a day to the plan");
+    addBtn.textContent = "+";
+    addBtn.addEventListener("click", toggleAddDayPanel);
+    dayRail.appendChild(addBtn);
+  }
+
+  function nextSuggestedDate() {
+    if (!DAYS.length) return isoOf(new Date());
+    var last = isoToDate(DAYS[DAYS.length - 1].iso);
+    last.setDate(last.getDate() + 1);
+    return isoOf(last);
+  }
+
+  function toggleAddDayPanel() {
+    var showing = !addDayPanel.hidden;
+    addDayPanel.hidden = showing;
+    if (!showing) {
+      newDayDate.value = nextSuggestedDate();
+      newDayDate.focus();
+    }
+  }
+
+  function renderMain() {
+    var d = DAYS.find(function (x) { return x.iso === state.selected; });
+    var day = getDay(d.iso);
+    var sorted = day.timeline.slice().sort(function (a, b) { return a.time < b.time ? -1 : a.time > b.time ? 1 : 0; });
+
+    var html = '';
+    var titleRow;
+    if (editingDayTitle) {
+      titleRow = '<div class="day-title-row editing">' +
+        '<input type="text" id="dayTitleInput" value="' + escapeHtml(day.title || "") + '" placeholder="e.g. Wedding day" aria-label="Day title">' +
+        '<div class="edit-actions">' +
+          '<button class="mini-btn save" id="saveTitleBtn">Save</button>' +
+          '<button class="mini-btn cancel" id="cancelTitleBtn">Cancel</button>' +
+        '</div>' +
+        '</div>';
+    } else if (day.title) {
+      titleRow = '<div class="day-title-row">' +
+        '<span class="day-title-badge">' + escapeHtml(day.title) + '</span>' +
+        '<button class="text-btn" id="editTitleBtn">Edit title</button>' +
+        '</div>';
+    } else {
+      titleRow = '<div class="day-title-row">' +
+        '<button class="text-btn" id="editTitleBtn">+ Add a title</button>' +
+        '</div>';
+    }
+    html += '<div class="day-head"><div class="day-head-text">' + titleRow + '<h2>' + d.dowFull + ', ' + d.dayNum + ' ' + d.monthFull + '</h2></div>' +
+      '<span class="day-sub">' + (d.iso === todayIso ? '<span class="today-pill">Today</span>' : '') +
+      '<button class="text-btn" id="removeDayBtn" title="Remove this day from the plan">Remove day</button></span></div>';
+
+    var dayTags = [];
+    day.timeline.forEach(function (e) {
+      (e.tags || []).forEach(function (t) { if (dayTags.indexOf(t) === -1) dayTags.push(t); });
+    });
+    if (activeFilter && dayTags.indexOf(activeFilter) === -1) activeFilter = null;
+    var visible = activeFilter
+      ? sorted.filter(function (e) { return e.tags && e.tags.indexOf(activeFilter) !== -1; })
+      : sorted;
+
+    html += '<section class="panel" id="timelinePanel">' +
+      '<div class="panel-head"><h3>Schedule</h3><span class="count-pill">' + visible.length + '</span></div>';
+    if (dayTags.length) {
+      html += '<div class="filter-bar">' +
+        '<button class="filter-pill' + (!activeFilter ? ' active' : '') + '" data-filter="">All</button>' +
+        dayTags.map(function (t) {
+          return '<button class="filter-pill' + (activeFilter === t ? ' active' : '') + '" style="--tag-color:' + tagColor(t) + '" data-filter="' + escapeHtml(t) + '">' + escapeHtml(t) + '</button>';
+        }).join('') +
+        '</div>';
+    }
+    if (visible.length) {
+      html += '<ul class="timeline">' + visible.map(function (e) {
+        if (e.id === editingEventId) {
+          var parts = e.time.split(":");
+          return '<li class="editing">' +
+            '<div class="time-field">' +
+              '<select data-edit-hour aria-label="Hour">' + hourOptionsHtml(parts[0]) + '</select>' +
+              '<select data-edit-minute aria-label="Minute">' + minuteOptionsHtml(parts[1]) + '</select>' +
+            '</div>' +
+            '<input type="text" class="edit-title" value="' + escapeHtml(e.title) + '" aria-label="Event title">' +
+            '<input type="text" class="edit-notes" value="' + escapeHtml(e.notes || "") + '" aria-label="Notes">' +
+            '<input type="text" class="edit-tags" value="' + escapeHtml((e.tags || []).join(", ")) + '" placeholder="Tags (optional)" aria-label="Tags">' +
+            '<div class="edit-actions">' +
+              '<button class="mini-btn save" data-save-event="' + e.id + '">Save</button>' +
+              '<button class="mini-btn cancel" data-cancel-event="' + e.id + '">Cancel</button>' +
+            '</div>' +
+            '</li>';
+        }
+        return '<li>' +
+          '<time class="mono">' + formatTime(e.time) + '</time>' +
+          '<div>' +
+            '<div class="ev-title">' + escapeHtml(e.title) + '</div>' +
+            (e.notes ? '<div class="ev-notes">' + escapeHtml(e.notes) + '</div>' : '') +
+            (e.tags && e.tags.length ? '<div class="ev-tags">' + e.tags.map(function (t) {
+              return '<span class="tag-chip" style="--tag-color:' + tagColor(t) + '">' + escapeHtml(t) + '</span>';
+            }).join('') + '</div>' : '') +
+          '</div>' +
+          '<div class="row-actions">' +
+            '<button class="icon-btn" data-edit-event="' + e.id + '" title="Edit" aria-label="Edit event">&#9998;</button>' +
+            '<button class="icon-btn" data-remove-event="' + e.id + '" title="Remove" aria-label="Remove event">&times;</button>' +
+          '</div>' +
+          '</li>';
+      }).join('') + '</ul>';
+    } else {
+      html += '<p class="empty-note">' + (activeFilter ? 'Nothing tagged “' + escapeHtml(activeFilter) + '” for this day.' : 'Nothing scheduled yet &mdash; add the first thing below.') + '</p>';
+    }
+    html += '<div class="add-row">' +
+      '<div class="time-field">' +
+        '<select id="newEvHour" aria-label="Hour">' + hourOptionsHtml("09") + '</select>' +
+        '<select id="newEvMinute" aria-label="Minute">' + minuteOptionsHtml("00") + '</select>' +
+      '</div>' +
+      '<input type="text" id="newEvTitle" placeholder="What&rsquo;s happening" aria-label="Event title">' +
+      '<input type="text" id="newEvNotes" placeholder="Notes (optional)" aria-label="Notes">' +
+      '<input type="text" class="tags-input" id="newEvTags" placeholder="Tags (optional) &mdash; e.g. Wife, Husband&rsquo;s family. Untagged only shows under All." aria-label="Tags">' +
+      '<button id="addEventBtn">Add</button>' +
+      '</div></section>';
+
+    html += '<section class="panel" id="todoPanel">' +
+      '<div class="panel-head"><h3>To-do</h3><span class="count-pill">' + day.todos.filter(function (t) { return !t.done; }).length + ' open</span></div>';
+    if (day.todos.length) {
+      html += '<ul class="todo-list">' + day.todos.map(function (t) {
+        if (t.id === editingTodoId) {
+          return '<li class="editing">' +
+            '<input type="text" class="edit-todo-text" value="' + escapeHtml(t.text) + '" aria-label="To-do text">' +
+            '<div class="edit-actions">' +
+              '<button class="mini-btn save" data-save-todo="' + t.id + '">Save</button>' +
+              '<button class="mini-btn cancel" data-cancel-todo="' + t.id + '">Cancel</button>' +
+            '</div>' +
+            '</li>';
+        }
+        return '<li>' +
+          '<button class="todo-drag-handle" data-drag-todo="' + t.id + '" title="Drag to a day tab to copy this to-do there" aria-label="Drag to copy to another day">&#8942;&#8942;</button>' +
+          '<button class="todo-check' + (t.done ? ' done' : '') + '" data-toggle-todo="' + t.id + '" aria-label="' + (t.done ? 'Mark not done' : 'Mark done') + '">' + (t.done ? '&#10003;' : '') + '</button>' +
+          '<span class="todo-text' + (t.done ? ' done' : '') + '">' + escapeHtml(t.text) + '</span>' +
+          '<button class="icon-btn" data-edit-todo="' + t.id + '" title="Edit" aria-label="Edit to-do">&#9998;</button>' +
+          '<button class="icon-btn" data-remove-todo="' + t.id + '" title="Remove" aria-label="Remove to-do">&times;</button>' +
+          '</li>';
+      }).join('') + '</ul>';
+    } else {
+      html += '<p class="empty-note">No to-dos for this day yet.</p>';
+    }
+    html += '<div class="todo-add">' +
+      '<input type="text" id="newTodoText" placeholder="Add a to-do" aria-label="New to-do">' +
+      '<button id="addTodoBtn">Add</button>' +
+      '</div></section>';
+
+    html += '<section class="panel">' +
+      '<div class="panel-head"><h3>Notes</h3></div>' +
+      '<div class="notes-body">' +
+      '<textarea id="dayNotesText" placeholder="Anything worth keeping handy for this day &mdash; directions, a reservation number, what to bring&hellip;">' + escapeHtml(day.notes || "") + '</textarea>' +
+      '</div></section>';
+
+    dayMain.innerHTML = html;
+
+    document.getElementById("removeDayBtn").addEventListener("click", function () {
+      removeDay(d.iso);
+    });
+    var editTitleBtn = document.getElementById("editTitleBtn");
+    if (editTitleBtn) {
+      editTitleBtn.addEventListener("click", function () {
+        editingDayTitle = true;
+        renderMain();
+      });
+    }
+    var saveTitleBtn = document.getElementById("saveTitleBtn");
+    if (saveTitleBtn) {
+      saveTitleBtn.addEventListener("click", function () {
+        editingDayTitle = false;
+        updateDayTitle(d.iso, document.getElementById("dayTitleInput").value);
+      });
+    }
+    var cancelTitleBtn = document.getElementById("cancelTitleBtn");
+    if (cancelTitleBtn) {
+      cancelTitleBtn.addEventListener("click", function () {
+        editingDayTitle = false;
+        renderMain();
+      });
+    }
+    var dayTitleInput = document.getElementById("dayTitleInput");
+    if (dayTitleInput) {
+      dayTitleInput.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") document.getElementById("saveTitleBtn").click();
+        if (e.key === "Escape") document.getElementById("cancelTitleBtn").click();
+      });
+      dayTitleInput.focus();
+      dayTitleInput.select();
+    }
+    document.getElementById("addEventBtn").addEventListener("click", function () {
+      var time = document.getElementById("newEvHour").value + ":" + document.getElementById("newEvMinute").value;
+      var title = document.getElementById("newEvTitle").value;
+      var notes = document.getElementById("newEvNotes").value;
+      var tags = document.getElementById("newEvTags").value;
+      addEvent(d.iso, time, title, notes, tags);
+    });
+    ["newEvTitle", "newEvNotes", "newEvTags"].forEach(function (id) {
+      document.getElementById(id).addEventListener("keydown", function (e) {
+        if (e.key === "Enter") document.getElementById("addEventBtn").click();
+      });
+    });
+    document.getElementById("addTodoBtn").addEventListener("click", function () {
+      var text = document.getElementById("newTodoText").value;
+      addTodo(d.iso, text);
+      document.getElementById("newTodoText").value = "";
+    });
+    document.getElementById("newTodoText").addEventListener("keydown", function (e) {
+      if (e.key === "Enter") document.getElementById("addTodoBtn").click();
+    });
+    document.getElementById("dayNotesText").addEventListener("input", function (e) {
+      saveDayNotesQuiet(d.iso, e.target.value);
+    });
+    dayMain.querySelectorAll("[data-remove-event]").forEach(function (b) {
+      b.addEventListener("click", function () { removeEvent(d.iso, b.getAttribute("data-remove-event")); });
+    });
+    dayMain.querySelectorAll("[data-filter]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        var val = b.getAttribute("data-filter");
+        activeFilter = val || null;
+        renderMain();
+      });
+    });
+    dayMain.querySelectorAll("[data-toggle-todo]").forEach(function (b) {
+      b.addEventListener("click", function () { toggleTodo(d.iso, b.getAttribute("data-toggle-todo")); });
+    });
+    dayMain.querySelectorAll("[data-remove-todo]").forEach(function (b) {
+      b.addEventListener("click", function () { removeTodo(d.iso, b.getAttribute("data-remove-todo")); });
+    });
+
+    dayMain.querySelectorAll("[data-edit-event]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        editingEventId = b.getAttribute("data-edit-event");
+        renderMain();
+      });
+    });
+    dayMain.querySelectorAll("[data-save-event]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        var li = b.closest("li");
+        var hour = li.querySelector("[data-edit-hour]").value;
+        var minute = li.querySelector("[data-edit-minute]").value;
+        var title = li.querySelector(".edit-title").value;
+        var notes = li.querySelector(".edit-notes").value;
+        var tags = li.querySelector(".edit-tags").value;
+        if (!title.trim()) return;
+        var id = b.getAttribute("data-save-event");
+        editingEventId = null;
+        updateEvent(d.iso, id, hour + ":" + minute, title, notes, tags);
+      });
+    });
+    dayMain.querySelectorAll("[data-cancel-event]").forEach(function (b) {
+      b.addEventListener("click", function () { editingEventId = null; renderMain(); });
+    });
+    dayMain.querySelectorAll(".edit-title, .edit-notes, .edit-tags").forEach(function (inp) {
+      inp.addEventListener("keydown", function (e) {
+        var li = inp.closest("li");
+        if (e.key === "Enter") li.querySelector("[data-save-event]").click();
+        if (e.key === "Escape") li.querySelector("[data-cancel-event]").click();
+      });
+    });
+
+    dayMain.querySelectorAll("[data-edit-todo]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        editingTodoId = b.getAttribute("data-edit-todo");
+        renderMain();
+      });
+    });
+    day.todos.forEach(function (t) {
+      var handle = dayMain.querySelector('[data-drag-todo="' + t.id + '"]');
+      if (handle) {
+        handle.addEventListener("pointerdown", function (e) {
+          startTodoDrag(e, d.iso, t.id, t.text);
+        });
+      }
+    });
+    dayMain.querySelectorAll("[data-save-todo]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        var li = b.closest("li");
+        var text = li.querySelector(".edit-todo-text").value;
+        if (!text.trim()) return;
+        var id = b.getAttribute("data-save-todo");
+        editingTodoId = null;
+        updateTodo(d.iso, id, text);
+      });
+    });
+    dayMain.querySelectorAll("[data-cancel-todo]").forEach(function (b) {
+      b.addEventListener("click", function () { editingTodoId = null; renderMain(); });
+    });
+    dayMain.querySelectorAll(".edit-todo-text").forEach(function (inp) {
+      inp.addEventListener("keydown", function (e) {
+        var li = inp.closest("li");
+        if (e.key === "Enter") li.querySelector("[data-save-todo]").click();
+        if (e.key === "Escape") li.querySelector("[data-cancel-todo]").click();
+      });
+    });
+
+    var focusTitle = dayMain.querySelector(".edit-title");
+    if (focusTitle) { focusTitle.focus(); focusTitle.select(); }
+    var focusTodo = dayMain.querySelector(".edit-todo-text");
+    if (focusTodo) { focusTodo.focus(); focusTodo.select(); }
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  // ---------- export ----------
+
+  function buildWorkbook() {
+    var wb = XLSX.utils.book_new();
+
+    DAYS.forEach(function (d) {
+      var day = getDay(d.iso);
+      var sorted = day.timeline.slice().sort(function (a, b) { return a.time < b.time ? -1 : a.time > b.time ? 1 : 0; });
+      var heading = "Wedding Run Sheet — " + d.dowFull + ", " + d.dayNum + " " + d.monthFull + " 2026";
+      if (day.title) heading += " — " + day.title;
+      var aoa = [
+        [heading],
+        [],
+        ["Time", "Event", "Notes", "Tags"]
+      ];
+      sorted.forEach(function (e) { aoa.push([formatTime(e.time), e.title, e.notes || "", (e.tags || []).join(", ")]); });
+      if (!sorted.length) aoa.push(["", "(nothing scheduled)", "", ""]);
+      aoa.push([]);
+      aoa.push(["To-Do"]);
+      aoa.push(["Done", "Task"]);
+      day.todos.forEach(function (t) { aoa.push([t.done ? "Yes" : "No", t.text]); });
+      if (!day.todos.length) aoa.push(["", "(none)"]);
+      aoa.push([]);
+      aoa.push(["Notes"]);
+      (day.notes ? day.notes.split("\n") : ["(none)"]).forEach(function (line) { aoa.push([line]); });
+
+      var ws = XLSX.utils.aoa_to_sheet(aoa);
+      ws["!cols"] = [{ wch: 12 }, { wch: 38 }, { wch: 38 }, { wch: 20 }];
+      var sheetName = (d.dayNum + " " + d.monthShort + (day.title ? " - " + day.title : "")).replace(/[:\\\/\?\*\[\]]/g, "-");
+      if (sheetName.length > 31) sheetName = sheetName.slice(0, 31);
+      XLSX.utils.book_append_sheet(wb, ws, sheetName);
+    });
+    return wb;
+  }
+
+  function triggerDownload(blob, filename) {
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+  }
+
+  exportBtn.addEventListener("click", function () {
+    try {
+      var wb = buildWorkbook();
+      var arr = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+      var blob = new Blob([arr], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+      triggerDownload(blob, "wedding-run-sheet.xlsx");
+    } catch (e) {
+      alert("Could not generate the Excel file. Please try again.");
+    }
+  });
+
+  // ---------- boot ----------
+
+  document.getElementById("confirmAddDayBtn").addEventListener("click", function () {
+    var iso = newDayDate.value;
+    if (!iso) return;
+    addDay(iso);
+    addDayPanel.hidden = true;
+  });
+  document.getElementById("cancelAddDayBtn").addEventListener("click", function () {
+    addDayPanel.hidden = true;
+  });
+  newDayDate.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") document.getElementById("confirmAddDayBtn").click();
+    if (e.key === "Escape") { addDayPanel.hidden = true; }
+  });
+
+  DAYS.forEach(function (d) { state.data[d.iso] = loadLocal(d.iso); });
+  renderRail();
+  renderMain();
+})();
+</script>
+</body>
+</html>
