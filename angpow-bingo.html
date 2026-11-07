@@ -153,7 +153,7 @@ button{font:inherit;cursor:pointer}
   let state = { size: 75, called: [] }, sound = true, busy = false, hooks = {};
 
   function load(){
-    try { const s = JSON.parse(localStorage.getItem(STORE)); if (s && Array.isArray(s.called) && (s.size === 75 || s.size === 90)) state = s; } catch(e) {}
+    try { const s = JSON.parse(localStorage.getItem(STORE)); if (s && Array.isArray(s.called) && s.size === 75) state = s; } catch(e) {}
   }
   load();
   try { sound = localStorage.getItem(STORE + ":sound") !== "off"; } catch(e) {}
@@ -284,21 +284,16 @@ button{font:inherit;cursor:pointer}
       d.innerHTML = `<form method="dialog" class="ng-form">
         <h2 class="ng-title">Start a new game?</h2>
         <p class="ng-text">This clears every number drawn so far.</p>
-        <fieldset class="ng-opts"><legend class="ng-text">Balls</legend>
-          <label class="ng-opt"><input type="radio" name="size" value="75"> <b>75</b> <span>B I N G O</span></label>
-          <label class="ng-opt"><input type="radio" name="size" value="90"> <b>90</b> <span>1 to 90</span></label>
-        </fieldset>
         <div class="ng-row"><button type="button" class="ng-btn" value="cancel">Keep playing</button><button class="ng-btn ng-primary">Start new game</button></div>
       </form>`;
       document.body.appendChild(d);
       d.querySelector('[value="cancel"]').onclick = () => d.close();
       d.querySelector("form").onsubmit = e => {
         e.preventDefault();
-        state = { size: +d.querySelector("input[name=size]:checked").value, called: [] };
+        state = { size: 75, called: [] };
         save(); d.close(); hooks.render({ reset: true }); sync();
       };
     }
-    d.querySelector(`input[name=size][value="${state.size}"]`).checked = true;
     d.showModal();
   }
 
