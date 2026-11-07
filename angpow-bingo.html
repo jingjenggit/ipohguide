@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wedding Bingo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,500;0,6..96,800;1,6..96,500&family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
+<style>
+:root{
+  --lacquer:#6E0E14; --lacquer-d:#4f080d; --cinnabar:#C1272D; --cinnabar-d:#9d1b21; --gold:#E2B857; --gold-d:#9C7A2E; --paper:#F6E9CF;
+  --didone:"Bodoni Moda", "Didot", "Bodoni 72", Georgia, serif;
+  --brush:"Ma Shan Zheng", "Kaiti SC", "STKaiti", "KaiTi", serif;
+}
+*{box-sizing:border-box}
+body{margin:0;min-height:100dvh;color:var(--paper);font:17px/1.45 var(--didone);background-color:var(--lacquer);
+  background-image:
+    radial-gradient(ellipse at 30% 40%, rgba(193,39,45,.55), transparent 60%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Ctext x='60' y='78' font-size='54' text-anchor='middle' fill='%23E2B857' fill-opacity='.045' font-family='serif'%3E%E5%9B%8D%3C/text%3E%3C/svg%3E");
+}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+.page{display:grid;grid-template-columns:minmax(300px,.95fr) 1.05fr;gap:clamp(20px,3vw,48px);height:100dvh;padding:clamp(12px,2dvh,24px) clamp(16px,3vw,48px)}
+.side{display:flex;flex-direction:column;justify-content:center;gap:clamp(12px,2.2dvh,22px);min-width:0}
+@media (max-width:860px){.page{grid-template-columns:1fr;height:auto}.stage{height:88dvh}}
+
+/* packet */
+.stage{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:6dvh;min-width:0;min-height:0}
+.packet{position:relative;height:min(52dvh,60vw);aspect-ratio:3/4.3;perspective:1100px;transition:transform .8s ease-in-out}
+.p-back{position:absolute;inset:0;border-radius:12px;background:var(--cinnabar-d)}
+.card{position:absolute;left:7%;right:7%;top:6%;height:86%;border-radius:6px;z-index:2;overflow:hidden;container-type:size;
+  background:linear-gradient(135deg,#b8913e,#f3d68a 28%,#fff0c2 42%,#e2b857 55%,#a7832f 100%);
+  transition:transform .8s cubic-bezier(.3,1,.4,1)}
+/* Photo sits whole at the top of the card, over a blurred copy, so landscape shots keep every face */
+.ph-blur,.ph{position:absolute;inset:0;width:100%;height:100%}
+.ph-blur{object-fit:cover;filter:blur(14px) brightness(.72);transform:scale(1.15)}
+.ph{object-fit:contain;object-position:50% 0}
+.ph[src=""],.ph-blur[src=""]{visibility:hidden}
+.scrim{position:absolute;left:0;right:0;bottom:0;height:46%;background:linear-gradient(180deg,transparent,rgba(79,8,13,.82) 42%,rgba(79,8,13,.96))}
+.frame{position:absolute;inset:0;border-radius:6px;box-shadow:inset 0 0 0 1.2cqh var(--gold), inset 0 0 0 1.5cqh rgba(110,14,20,.55), inset 0 0 0 2.1cqh rgba(255,240,194,.35)}
+.c-text{position:absolute;left:6%;right:6%;bottom:3.5%;display:flex;align-items:flex-end;justify-content:space-between;gap:3%;color:var(--paper)}
+.c-letter{font:italic 500 9cqh/1 var(--didone);color:var(--gold);align-self:flex-start;margin-right:-2%}
+.c-num{flex:1;font:800 27cqh/.95 var(--didone);font-variant-numeric:lining-nums;letter-spacing:-.02em;text-shadow:0 .5cqh 1.4cqh rgba(0,0,0,.55)}
+.c-zh{font:11cqh/1.05 var(--brush);color:var(--gold);writing-mode:vertical-rl;text-shadow:0 .3cqh 1cqh rgba(0,0,0,.6)}
+.p-front{position:absolute;left:0;right:0;bottom:0;top:24%;z-index:3;border-radius:0 0 12px 12px;
+  background:linear-gradient(180deg,var(--cinnabar),#b3222a);box-shadow:inset 0 0 0 3px rgba(226,184,87,.55), inset 0 0 0 7px var(--cinnabar), inset 0 0 0 8px rgba(226,184,87,.35)}
+.p-front .wish{position:absolute;left:0;right:0;bottom:12%;text-align:center;font:clamp(40px,9dvh,90px)/1 var(--brush);color:var(--gold);text-shadow:0 2px 0 var(--gold-d)}
+.flap{position:absolute;left:0;right:0;top:0;height:46%;z-index:4;transform-origin:50% 0;
+  background:linear-gradient(180deg,#cf3239,var(--cinnabar));clip-path:polygon(0 0,100% 0,100% 52%,50% 100%,0 52%);border-radius:12px 12px 0 0;
+  transition:transform .55s ease-in-out, z-index 0s .27s}
+.seal{position:absolute;left:50%;top:46%;width:18%;aspect-ratio:1;transform:translate(-50%,-50%);z-index:5;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#fff0c2,var(--gold) 45%,var(--gold-d));display:grid;place-items:center;
+  font:clamp(18px,3.6dvh,36px)/1 var(--brush);color:var(--cinnabar);box-shadow:0 3px 8px rgba(0,0,0,.3);transition:opacity .25s, transform .25s}
+.packet.open .flap{transform:rotateX(180deg);z-index:1}
+.packet.open .seal{opacity:0;transform:translate(-50%,-50%) scale(.4)}
+.packet.out{transform:translateY(5dvh)}
+.packet.out .card{transform:translateY(-82%)}
+.packet.big .card{z-index:6;transform:translateY(var(--dy,0)) scale(var(--s,1));box-shadow:0 30px 70px rgba(0,0,0,.55)}
+.packet.still,.packet.still *{transition:none!important}
+.packet.shake{animation:shake .32s ease-in-out infinite}
+@keyframes shake{0%,100%{transform:rotate(0)}25%{transform:rotate(-3deg) translateY(-2px)}75%{transform:rotate(3deg) translateY(-2px)}}
+.idle-note{font-style:italic;color:#f0cfa0;text-align:center;margin-top:12px}
+
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px}
+.draw{font:800 clamp(18px,2.6dvh,24px)/1 var(--didone);color:var(--lacquer);background:var(--gold);border:none;padding:15px 30px;
+  box-shadow:0 0 0 2px var(--lacquer), 0 0 0 3.5px var(--gold), 0 10px 22px -10px rgba(0,0,0,.6)}
+.draw:hover{background:#ecc66a}
+.draw:disabled{opacity:.55;cursor:default}
+.count{font-style:italic;color:#f0cfa0}
+.tools{display:flex;flex-wrap:wrap;gap:2px;margin-left:-10px}
+.tool{border:none;background:none;color:var(--gold);font-size:15px;padding:6px 10px}
+.tool:hover{text-decoration:underline;text-underline-offset:4px}
+.tool:disabled{opacity:.4;cursor:default;text-decoration:none}
+
+/* board of small packets */
+.board{--cols:16;width:min(100%, calc(var(--bh,70dvh) * var(--cols) / var(--rows) * .76));display:grid;grid-template-columns:repeat(var(--cols),minmax(0,1fr));gap:clamp(3px,.5vw,7px)}
+.lbl{display:grid;place-items:center;font:italic 500 clamp(20px,3.6dvh,36px)/1 var(--didone);color:var(--gold)}
+.pk{aspect-ratio:3/4;border-radius:3px;display:grid;place-items:end center;padding-bottom:12%;position:relative;
+  background:linear-gradient(180deg,#8a161c,#7a1218);color:rgba(226,184,87,.45);font:500 clamp(11px,1.9dvh,19px)/1 var(--didone);font-variant-numeric:lining-nums}
+.pk::before{content:"";position:absolute;left:0;right:0;top:0;height:38%;background:rgba(0,0,0,.12);clip-path:polygon(0 0,100% 0,100% 50%,50% 100%,0 50%)}
+.pk.on{background:linear-gradient(160deg,#f3d68a,var(--gold) 50%,#c79c42);color:var(--lacquer);font-weight:800}
+.pk.on::before{background:rgba(110,14,20,.12)}
+.pk.last{box-shadow:0 0 0 2px var(--lacquer), 0 0 0 4px var(--paper)}
+.pk.fresh{animation:flip .7s ease-out}
+@keyframes flip{0%{transform:rotateY(90deg) scale(1.3)}100%{transform:none}}
+.prev{color:#f0cfa0;font-style:italic;display:flex;gap:8px;align-items:center;flex-wrap:wrap;min-height:1.6em}
+.prev b{font:800 18px var(--didone);font-style:normal;color:var(--gold);border-bottom:1px solid rgba(226,184,87,.5);padding:0 2px}
+
+/* dialog */
+.ng{border:none;padding:0;background:var(--paper);color:var(--lacquer);width:min(400px,90vw);box-shadow:0 0 0 6px var(--cinnabar), 0 0 0 8px var(--gold), 0 30px 60px rgba(0,0,0,.5)}
+.ng::backdrop{background:rgba(79,8,13,.6)}
+.ng-form{padding:26px}
+.ng-title{font:800 26px/1.2 var(--didone);margin:0 0 6px}
+.ng-text{font-style:italic;margin:0 0 12px;padding:0;color:#7a3a2a}
+.ng-opts{border:none;padding:0;margin:0 0 18px;display:flex;gap:8px}
+.ng-opts legend{float:left;width:100%}
+.ng-opt{flex:1;border:1.5px solid #d9bf8f;padding:10px;cursor:pointer;display:flex;gap:8px;align-items:baseline}
+.ng-opt:has(input:checked){border-color:var(--cinnabar);background:#f9dcc2}
+.ng-opt b{font-size:24px}
+.ng-opt span{font-size:13px;font-style:italic}
+.ng-row{display:flex;gap:8px;justify-content:flex-end}
+.ng-btn{border:1.5px solid var(--lacquer);background:none;color:var(--lacquer);padding:9px 14px}
+.ng-primary{background:var(--cinnabar);border-color:var(--cinnabar);color:var(--paper);font-weight:800}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="page">
+  <section class="stage" id="stage">
+    <div class="packet" id="packet" aria-live="polite" aria-atomic="true">
+      <div class="p-back"></div>
+      <div class="card" id="card">
+        <img class="ph-blur" id="pb" alt="" src="">
+        <img class="ph" id="ph" alt="" src="">
+        <div class="scrim"></div>
+        <div class="c-text"><div class="c-letter" id="cl"></div><div class="c-num" id="cn"></div><div class="c-zh" id="cz" lang="zh-Hans"></div></div>
+        <div class="frame"></div>
+      </div>
+      <div class="p-front"><div class="wish" lang="zh-Hans">大吉</div></div>
+      <div class="flap"></div>
+      <div class="seal" lang="zh-Hans">囍</div>
+    </div>
+    <div class="idle-note" id="note">Press Draw a number to open the first packet</div>
+  </section>
+
+  <section class="side">
+    <div class="board" id="board" aria-label="Numbers drawn"></div>
+    <div class="prev" id="prev"></div>
+    <div class="bar">
+      <button class="draw" data-act="draw">Draw a number</button>
+      <span class="count" data-bind="count"></span>
+    </div>
+    <div class="tools">
+      <button class="tool" data-act="undo">Undo last draw</button>
+      <button class="tool" data-act="sound"></button>
+      <button class="tool" data-act="full">Full screen</button>
+      <button class="tool" data-act="new">New game</button>
+    </div>
+  </section>
+</div>
+
+<script>
+// Bingo caller logic: draws, saved game, sound, confetti, new-game dialog.
+// The page calls Bingo.init({ animate, render }) and styles the markup it owns.
+//   animate(pick, left) -> Promise   plays the draw animation for `pick`
+//   render(info)                     redraws the board; info.fresh is the number just drawn
+// Buttons are wired by attribute: data-act="draw|undo|new|sound|full".
+// Text bound by attribute: data-bind="count" ("12 of 75 drawn").
+(function(){
+  const STORE = "wedding-bingo-v1";
+  const LETTERS = "BINGO";
+  const B = window.Bingo = {};
+  let state = { size: 75, called: [] }, sound = true, busy = false, hooks = {};
+
+  function load(){
+    try { const s = JSON.parse(localStorage.getItem(STORE)); if (s && Array.isArray(s.called) && (s.size === 75 || s.size === 90)) state = s; } catch(e) {}
+  }
+  load();
+  try { sound = localStorage.getItem(STORE + ":sound") !== "off"; } catch(e) {}
+  const save = () => { try { localStorage.setItem(STORE, JSON.stringify(state)); } catch(e) {} };
+
+  B.reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  B.state = () => state;
+  B.busy = () => busy;
+  B.last = () => state.called[state.called.length - 1];
+  B.letterOf = n => state.size === 75 ? LETTERS[Math.floor((n - 1) / 15)] : "";
+  B.remaining = () => { const c = new Set(state.called); return Array.from({ length: state.size }, (_, i) => i + 1).filter(n => !c.has(n)); };
+  B.sleep = ms => new Promise(r => setTimeout(r, ms));
+  B.rand = max => { const a = new Uint32Array(1); crypto.getRandomValues(a); return a[0] % max; };
+
+  // 41 -> 四十一
+  B.zh = n => {
+    const d = "零一二三四五六七八九";
+    if (n < 10) return d[n];
+    const t = Math.floor(n / 10), u = n % 10;
+    return (t > 1 ? d[t] : "") + "十" + (u ? d[u] : "");
+  };
+
+  // Board rows: 75-ball = B/I/N/G/O rows of 15, 90-ball = 9 rows of 10
+  B.rows = () => state.size === 75
+    ? [...LETTERS].map((l, r) => ({ label: l, nums: Array.from({ length: 15 }, (_, i) => r * 15 + i + 1) }))
+    : Array.from({ length: 9 }, (_, r) => ({ label: "", nums: Array.from({ length: 10 }, (_, i) => r * 10 + i + 1) }));
+
+  // Each number has its own photo: photos/07.jpg is number 7
+  B.photoUrl = n => `bingo-photos/${String(n).padStart(2, "0")}.jpg`;
+  // Resolves with the url once loaded, or null if it's missing, so a slow connection can't stall a draw
+  B.loadPhoto = n => new Promise(res => {
+    const i = new Image(), url = B.photoUrl(n);
+    i.onload = () => res(url); i.onerror = () => res(null); i.src = url;
+    setTimeout(() => res(url), 2500);
+  });
+  // Fetch every photo in the background, one at a time, so draws are instant on venue wifi
+  B.preloadPhotos = async () => { for (const n of B.remaining()) await B.loadPhoto(n); };
+
+  // Flick through random numbers, slowing down like a wheel
+  B.roll = async (left, onTick, { steps = 24, min = 35, max = 260 } = {}) => {
+    if (B.reduced) steps = Math.min(steps, 3);
+    for (let i = 0; i < steps; i++){
+      onTick(left[B.rand(left.length)], i, steps);
+      B.tone(300 + i * 18, .04);
+      await B.sleep(min + Math.pow(i / steps, 3) * max);
+    }
+  };
+
+  // ---------- sound: synthesised, no audio files ----------
+  let ac;
+  B.tone = (freq, dur = .05, type = "triangle", vol = .08) => {
+    if (!sound) return;
+    try {
+      ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+      const o = ac.createOscillator(), g = ac.createGain();
+      o.type = type; o.frequency.value = freq;
+      g.gain.setValueAtTime(vol, ac.currentTime);
+      g.gain.exponentialRampToValueAtTime(.0001, ac.currentTime + dur);
+      o.connect(g).connect(ac.destination); o.start(); o.stop(ac.currentTime + dur);
+    } catch(e) {}
+  };
+  B.chime = (notes = [523, 659, 784, 1047]) => notes.forEach((f, i) => setTimeout(() => B.tone(f, .5, "sine", .12), i * 90));
+
+  // ---------- confetti ----------
+  let cv, cx, parts = [], raf = 0;
+  B.confetti = (x, y, colors, { count = 130, shapes = "mixed" } = {}) => {
+    if (B.reduced) return;
+    if (!cv){
+      cv = document.createElement("canvas");
+      cv.style.cssText = "position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:50";
+      document.body.appendChild(cv); cx = cv.getContext("2d");
+      const rs = () => { cv.width = innerWidth * devicePixelRatio; cv.height = innerHeight * devicePixelRatio; };
+      addEventListener("resize", rs); rs();
+    }
+    for (let i = 0; i < count; i++){
+      const a = Math.random() * Math.PI * 2, v = 4 + Math.random() * 9;
+      parts.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 4, s: 4 + Math.random() * 6, r: Math.random() * 6, vr: (Math.random() - .5) * .3,
+        c: colors[i % colors.length], life: 90 + Math.random() * 50, round: shapes === "round" || (shapes === "mixed" && Math.random() < .3) });
+    }
+    if (!raf) raf = requestAnimationFrame(tick);
+  };
+  function tick(){
+    const d = devicePixelRatio; cx.clearRect(0, 0, cv.width, cv.height);
+    parts = parts.filter(p => p.life-- > 0);
+    for (const p of parts){
+      p.vy += .25; p.vx *= .985; p.x += p.vx; p.y += p.vy; p.r += p.vr;
+      cx.save(); cx.globalAlpha = Math.min(1, p.life / 30); cx.translate(p.x * d, p.y * d); cx.rotate(p.r); cx.fillStyle = p.c;
+      if (p.round){ cx.beginPath(); cx.arc(0, 0, p.s * d / 2, 0, 7); cx.fill(); } else cx.fillRect(-p.s * d / 2, -p.s * d / 4, p.s * d, p.s * d / 2);
+      cx.restore();
+    }
+    raf = parts.length ? requestAnimationFrame(tick) : 0;
+  }
+  B.centerOf = el => { const r = el.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; };
+
+  // ---------- actions ----------
+  async function draw(){
+    if (busy) return;
+    const left = B.remaining(); if (!left.length) return;
+    busy = true; sync();
+    const pick = left[B.rand(left.length)];
+    try { await hooks.animate(pick, left); }
+    finally {
+      state.called.push(pick); save();
+      busy = false; hooks.render({ fresh: pick }); sync();
+    }
+  }
+  function undo(){
+    if (busy || !state.called.length) return;
+    state.called.pop(); save(); hooks.render({ undo: true }); sync();
+  }
+  function sync(){
+    const left = state.size - state.called.length;
+    document.querySelectorAll('[data-act="draw"]').forEach(b => {
+      b.disabled = busy || !left;
+      if (b.dataset.label === undefined) b.dataset.label = b.textContent;
+      b.textContent = left ? b.dataset.label : "All numbers drawn";
+    });
+    document.querySelectorAll('[data-act="undo"]').forEach(b => b.disabled = busy || !state.called.length);
+    document.querySelectorAll('[data-act="sound"]').forEach(b => { b.textContent = sound ? "Sound on" : "Sound off"; b.setAttribute("aria-pressed", sound); });
+    document.querySelectorAll('[data-bind="count"]').forEach(el => el.textContent = `${state.called.length} of ${state.size} drawn`);
+  }
+
+  // New game dialog, injected so every design gets the same flow; pages style .ng-*
+  function newGameDialog(){
+    let d = document.getElementById("ng");
+    if (!d){
+      d = document.createElement("dialog"); d.id = "ng"; d.className = "ng";
+      d.innerHTML = `<form method="dialog" class="ng-form">
+        <h2 class="ng-title">Start a new game?</h2>
+        <p class="ng-text">This clears every number drawn so far.</p>
+        <fieldset class="ng-opts"><legend class="ng-text">Balls</legend>
+          <label class="ng-opt"><input type="radio" name="size" value="75"> <b>75</b> <span>B I N G O</span></label>
+          <label class="ng-opt"><input type="radio" name="size" value="90"> <b>90</b> <span>1 to 90</span></label>
+        </fieldset>
+        <div class="ng-row"><button type="button" class="ng-btn" value="cancel">Keep playing</button><button class="ng-btn ng-primary">Start new game</button></div>
+      </form>`;
+      document.body.appendChild(d);
+      d.querySelector('[value="cancel"]').onclick = () => d.close();
+      d.querySelector("form").onsubmit = e => {
+        e.preventDefault();
+        state = { size: +d.querySelector("input[name=size]:checked").value, called: [] };
+        save(); d.close(); hooks.render({ reset: true }); sync();
+      };
+    }
+    d.querySelector(`input[name=size][value="${state.size}"]`).checked = true;
+    d.showModal();
+  }
+
+  B.init = h => {
+    hooks = h;
+    document.addEventListener("click", e => {
+      const a = e.target.closest("[data-act]"); if (!a) return;
+      ({
+        draw, undo, new: newGameDialog,
+        sound(){ sound = !sound; try { localStorage.setItem(STORE + ":sound", sound ? "on" : "off"); } catch(e) {} sync(); },
+        full(){ document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen?.(); }
+      })[a.dataset.act]?.();
+    });
+    addEventListener("keydown", e => {
+      if (e.code !== "Space" || document.querySelector("dialog[open]") || e.target.closest("button,input,a")) return;
+      e.preventDefault(); draw();
+    });
+    // Another tab (e.g. a different design) drew a number: follow along
+    addEventListener("storage", e => { if (e.key === STORE && !busy){ load(); hooks.render({ synced: true }); sync(); } });
+    hooks.render({ init: true }); sync();
+  };
+})();
+</script>
+<script>
+const $ = s => document.querySelector(s);
+const wait = ms => Bingo.sleep(Bingo.reduced ? 0 : ms);
+// Childhood photos stay on the laptop, so online those numbers show the plain gold card
+["#ph", "#pb"].forEach(s => $(s).onerror = e => { if (e.target.getAttribute("src")) e.target.setAttribute("src", ""); });
+function setCard(n, url){
+  $("#cn").textContent = n ?? ""; $("#cl").textContent = n ? Bingo.letterOf(n) : ""; $("#cz").textContent = n ? Bingo.zh(n) : "";
+  $("#ph").src = $("#pb").src = url || "";
+}
+// Size and place the grown card from the stage it sits in
+function fit(){
+  const st = $("#stage"), p = $("#packet"), h = p.offsetHeight, cardH = h * .86, cardW = cardH * ((h * 3 / 4.3) * .86 / cardH);
+  const H = Math.min(st.clientHeight * .97, st.clientWidth / (cardW / cardH));
+  const sink = innerHeight * .05, base = p.offsetTop + h * .06 + cardH / 2;
+  p.style.setProperty("--s", H / cardH);
+  p.style.setProperty("--dy", (st.clientHeight / 2 - base - sink) + "px");
+}
+addEventListener("resize", fit);
+
+Bingo.init({
+  async animate(pick){
+    const p = $("#packet"); $("#note").hidden = true; fit();
+    if (p.classList.contains("big")){ p.classList.remove("big"); await wait(750); p.classList.remove("out"); await wait(750); p.classList.remove("open"); await wait(550); }
+    const photo = Bingo.loadPhoto(pick);
+    p.classList.add("shake");
+    for (let i = 0; i < 9; i++){ Bingo.tone(420 + (i % 2) * 90, .05, "square", .04); await wait(150); }
+    p.classList.remove("shake");
+    setCard(pick, await photo);
+    p.classList.add("open"); await wait(600);
+    p.classList.add("out"); await wait(800);
+    p.classList.add("big"); await wait(500);
+    Bingo.chime([587, 740, 880, 1175]);
+    Bingo.confetti(...Bingo.centerOf($("#card")), ["#E2B857", "#fff0c2", "#C1272D", "#f3d68a", "#9C7A2E"]);
+  },
+  render({ fresh } = {}){
+    const st = Bingo.state(), set = new Set(st.called), last = Bingo.last(), p = $("#packet");
+    if (!fresh){
+      fit(); p.classList.add("still");
+      setCard(last, last ? Bingo.photoUrl(last) : "");
+      ["open", "out", "big"].forEach(c => p.classList.toggle(c, !!last));
+      $("#note").hidden = !!last;
+      requestAnimationFrame(() => requestAnimationFrame(() => p.classList.remove("still")));
+    }
+    const rows = Bingo.rows(), hasLbl = st.size === 75, b = $("#board");
+    b.style.setProperty("--cols", rows[0].nums.length + (hasLbl ? 1 : 0));
+    b.style.setProperty("--rows", rows.length);
+    b.style.setProperty("--bh", st.size === 75 ? "52dvh" : "70dvh");
+    b.innerHTML = rows.map(r => (hasLbl ? `<div class="lbl">${r.label}</div>` : "") + r.nums.map(n =>
+      `<div class="pk${set.has(n) ? " on" : ""}${n === last ? " last" : ""}${n === fresh ? " fresh" : ""}">${n}</div>`).join("")).join("");
+    $("#prev").innerHTML = st.called.length > 1 ? `Before that ${st.called.slice(-6, -1).reverse().map(n => `<b>${Bingo.letterOf(n)}${n}</b>`).join("")}` : "";
+  }
+});
+Bingo.preloadPhotos();
+</script>
+</body>
+</html>
