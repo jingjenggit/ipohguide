@@ -5,17 +5,22 @@ const FP = (() => {
   const SEAT_STORE = "wedding-seating-v1", FP_STORE = "wedding-floorplan-v1", MAX_SEATS = 12;
 
   // Copy of the base sheet in seating.html — only used when this device has no saved seating plan yet.
-  const SEED = [{"name": "Ejean's Family 6", "guests": ["Er gu", "Guzhang", "Chee kit", "Chee Kit's wife", "Chee Kit's Daughter x2", "Chee Hou", "Chee Hou's wife", "Joo Peng", "Chee Kang"], "seats": 10}, {"name": "Ejean's Family 5", "guests": ["Grandpa", "Grandma", "Yiyi", "Yizhang", "Yun Wei", "Kent If", "Cuebee", "Cue Bee's Son x2", "Ying ying", "?popo sister"], "seats": 11}, {"name": "Ejean's Family 4", "guests": ["Da jiu", "Yong yong", "Jeff's mum", "Sam suk po", "Ah yong", "Ah yong's wife", "Ah Yong's Son", "Fong Yi", "Fong Yi's hb", "Fong Yi's Son"], "seats": 10}, {"name": "Ejean's Family 3", "guests": ["Winnie", "Winnie's hb", "Winnie's 4x children", "Li Shyun", "Li Shyun's 2x children"], "seats": 10}, {"name": "Ejean's Family 2", "guests": ["Fifth grandaunt", "Fifth grandaunt's hb", "Sixth grandaunt", "Sixth grandaunt's hb", "Sixth grandaunt's Son +DIL", "Sixth grandaunt's Son", "Seventh grandaunt", "Seventh grandaunt' hb", "Jun", "Jun's wife", "Jun's child"], "seats": 12}, {"name": "Ejean's Family 1", "guests": ["Xiao gu", "Youngest dg", "Youngest dg hb", "Youngest dg's baby", "Da gu", "Da gu husband", "Ba mei", "Suk Mei"], "seats": 10}, {"name": "Mom's friends", "guests": ["Mom's friends x10"], "seats": 10}, {"name": "Mama & Dedey", "guests": ["Mama friends x8", "Mama", "Dedey", "Kelly"], "seats": 11}, {"name": "Friends", "guests": ["Catherine", "You Soon", "Sharmaine", "Wei Xiang", "Chloe", "Chloe's Bf", "Man Teng", "Jing Xuan", "Wen Di", "Pui San"], "seats": 10}, {"name": "Colleagues", "guests": ["Agnes", "Zhi Ying", "Zhao tian", "Sengja", "Hsao Kham", "Htay Htay", "Evelyne", "Evelyne's BF", "Brandon"], "seats": 10}, {"name": "Ballet table", "guests": ["Ying Yi", "Pui Yee", "Pui Yee's Husband", "Teacher", "Ballet girls 4 - 6x"], "seats": 10}, {"name": "JL's Family 1", "guests": ["Beng lim", "Beng lim's wife", "Beng lim's 4x children", "Beng Xiang", "Beng Xiang's 2x children", "Beng liang", "Jun", "Qiu Yan"], "seats": 12}, {"name": "VIP Table", "guests": ["Jing Long", "Ejean", "JL's Dad", "JL's Mom", "Ejean's Mom", "Ejean's Didi", "Ejean's Popo", "JL's gugu", "Guo Xuan's Wife", "Guo Xuan"], "seats": 10}, {"name": "JL Family 2", "guests": ["SH's brother", "SH's parents", "4yi", "San Yi", "Jiu Jiu", "Da Yi", "Jx", "Jk", "Jw"], "seats": 10}];
+  const SEED = [{"name": "Ejean's Family 6", "guests": ["Er gu", "Guzhang", "Chee kit", "Chee Kit's wife", "Chee Kit's Daughter x2", "Chee Hou", "Chee Hou's wife", "Joo Peng", "Chee Kang"], "seats": 10}, {"name": "Ejean's Family 5", "guests": ["Grandpa", "Grandma", "Yiyi", "Yizhang", "Yun Wei", "Kent If", "Cuebee", "Cue Bee's Son x2", "Ying ying", "Popo's sister (Unconfirmed)"], "seats": 11}, {"name": "Ejean's Family 4", "guests": ["Da jiu", "Yong yong", "Jeff's Mom", "Sam suk po", "Ah yong", "Ah yong's wife", "Ah Yong's Son", "Fong Yi", "Fong Yi's Husband", "Fong Yi's Son"], "seats": 10}, {"name": "Ejean's Family 3", "guests": ["Winnie", "Winnie's Husband", "Winnie's 4x children", "Li Shyun", "Li Shyun's 2x children"], "seats": 10}, {"name": "Ejean's Family 2", "guests": ["Fifth grandaunt", "Fifth grandaunt's husband", "Sixth grandaunt", "Sixth grandaunt's husband", "Sixth grandaunt's Son", "Sixth grandaunt's Daughter In Law", "Sixth grandaunt's Son", "Seventh grandaunt", "Seventh grandaunt' husband", "Jun", "Jun's wife", "Jun's child"], "seats": 12}, {"name": "Ejean's Family 1", "guests": ["Xiao gu", "Xiao Gu's Youngest daughter", "Xiao Gu Youngest daughter's husband", "Xiao Gu's Youngest daughter baby", "Da gu", "Da gu husband", "Ba mei", "Suk Mei"], "seats": 10}, {"name": "Mom's friends", "guests": ["Mom's friends x10"], "seats": 10}, {"name": "Mama & Dedey", "guests": ["Mama friends x8", "Mama", "Dedey", "Kelly"], "seats": 11}, {"name": "Friends", "guests": ["Catherine", "You Soon", "Sharmaine", "Wei Xiang", "Chloe", "Chloe's Partner", "Man Teng", "Jing Xuan", "Wen Di", "Pui San"], "seats": 10}, {"name": "Colleagues", "guests": ["Agnes", "Zhi Ying", "Zhao tian", "Sengja", "Hsao Kham", "Htay Htay", "Evelyne", "Stanley", "Brandon"], "seats": 10}, {"name": "Ballet table", "guests": ["Ying Yi", "Pui Yee", "Pui Yee's Husband", "Teacher", "Ballet girls 8x"], "seats": 12}, {"name": "JL's Family 1", "guests": ["Bheng Lim", "Meini", "Bheng lim's 4x children", "Bheng Siang", {"name": "Bheng Siang's children", "pax": 2}, "Bheng liang", "Jun", "Chiu Yan"], "seats": 12}, {"name": "VIP Table", "guests": ["Jing Long", "Ejean", "Jing Long's Mother", "Jing Long's Father", "Ejean's Mom", "Jeffrey (Didi)", "Ejean's 婆婆", "Jing long's 姑姑", "Shiow Han", "Guo Xuan"], "seats": 10}, {"name": "JL Family 2", "guests": ["Shiow Han's Mom", "Shiow Han's Dad", "Aunt Jacqueline (四姨）", "Aunt Carol (三姨）", "Uncle Wei Yong (舅舅)", "Aunt Audrey (大姨）", "Jing Xian", "Jing Kai", "Jing Wei", "Shiow Han's Brother"], "seats": 10}];
   const SEED_SIG = JSON.stringify(SEED).length + ":" + [...JSON.stringify(SEED)].reduce((h,c) => (h*31 + c.charCodeAt(0)) >>> 0, 7);
 
-  // Table spots, traced from the venue drawing dated 22 Nov 2026 (no table 14).
+  // Table spots, traced from the venue drawing dated 22 Nov 2026 (the drawing labels the last one 15; it is table 14).
   const SPOTS = [
     {id:"VIP", x:198, y:303, big:true},
     {id:"1", x:400, y:62}, {id:"2", x:322, y:58}, {id:"3", x:233, y:58}, {id:"5", x:150, y:100},
     {id:"6", x:233, y:138}, {id:"7", x:320, y:138}, {id:"8", x:400, y:135},
     {id:"9", x:403, y:465}, {id:"10", x:322, y:472}, {id:"11", x:230, y:490},
-    {id:"12", x:229, y:575}, {id:"13", x:325, y:560}, {id:"15", x:407, y:543},
+    {id:"12", x:229, y:575}, {id:"13", x:325, y:560}, {id:"14", x:407, y:543},
   ];
+  // Default placement: spot → table name (as named in the seating plan).
+  // To update it, export the floor plan to Excel and use its "Floor plan" sheet.
+  // From "Wedding - Floor plan 8 nov.xlsx".
+  const DEFAULT_MAP = {"VIP": "VIP Table", "1": "Ballet table", "2": "Mom's friends", "3": "Mama & Dedey", "5": "Colleagues", "6": "JL's Family 1", "7": "JL Family 2", "8": "Friends", "9": "Ejean's Family 4", "10": "Ejean's Family 5", "11": "Ejean's Family 6", "12": "Ejean's Family 2", "13": "Ejean's Family 3", "14": "Ejean's Family 1"};
+  const DEFAULT_SIG = JSON.stringify(DEFAULT_MAP);
   const spotLabel = id => id === "VIP" ? "VIP table" : "Table " + id;
 
   const normName = s => String(s).toLowerCase().replace(/['’\s]/g, "");
@@ -36,7 +41,10 @@ const FP = (() => {
     const tables = [], guests = [];
     SEED.forEach(c => {
       const t = { id: nid("t"), name: c.name, seats: 10 }; let pax = 0;
-      c.guests.forEach(g => { const p = parsePax(g); pax += p; guests.push({ id: nid("g"), name: g, pax: p, table: t.id }); });
+      c.guests.forEach(g => {   // a guest is a name, or {name, pax} when the headcount isn't in the name
+      const name = typeof g === "string" ? g : g.name, p = typeof g === "string" ? parsePax(g) : g.pax;
+      pax += p; guests.push({ id: nid("g"), name, pax: p, table: t.id });
+    });
       t.seats = Math.min(MAX_SEATS, Math.max(1, c.seats || Math.max(10, pax)));
       tables.push(t);
     });
@@ -47,7 +55,7 @@ const FP = (() => {
   function loadSeating(persist = true){
     let s = null;
     try { s = JSON.parse(localStorage.getItem(SEAT_STORE)); } catch(e) {}
-    if (!s || !s.tables) {
+    if (!s || !s.tables || s.seedSig !== SEED_SIG) {   // same rule as seating.html: a newer base sheet replaces older saved progress
       s = fromSeed();
       if (persist) try { localStorage.setItem(SEAT_STORE, JSON.stringify(s)); } catch(e) {}
     }
@@ -59,13 +67,12 @@ const FP = (() => {
   function loadMap(seating){
     let raw = null;
     try { raw = JSON.parse(localStorage.getItem(FP_STORE)); } catch(e) {}
+    // A newer default baked into this file replaces placements saved against the old one
+    // (placements saved before defaults existed carry no stamp and are kept)
+    if (!raw || !raw.spots || (raw.defaultSig !== undefined && raw.defaultSig !== DEFAULT_SIG)) raw = defaultRaw();
     const map = {}, used = new Set();
-    if (!raw || !raw.spots) {
-      const vip = seating.tables.find(t => /vip/i.test(t.name));
-      if (vip) map.VIP = vip.id;
-      return map;
-    }
     Object.entries(raw.spots).forEach(([sid, ref]) => {
+      if (sid === "15") sid = "14";   // spot was called 15 before 8 Nov
       if (!SPOTS.some(s => s.id === sid) || !ref) return;
       const t = seating.tables.find(t => t.id === ref.id) || seating.tables.find(t => normName(t.name) === normName(ref.name));
       if (t && !used.has(t.id)) { map[sid] = t.id; used.add(t.id); }
@@ -78,7 +85,16 @@ const FP = (() => {
       const t = seating.tables.find(t => t.id === tid);
       if (t) spots[sid] = { id: t.id, name: t.name };
     });
-    try { localStorage.setItem(FP_STORE, JSON.stringify({ spots })); } catch(e) {}
+    try { localStorage.setItem(FP_STORE, JSON.stringify({ spots, defaultSig: DEFAULT_SIG })); } catch(e) {}
+  }
+  const defaultRaw = () => ({ spots: Object.fromEntries(Object.entries(DEFAULT_MAP).map(([sid, name]) => [sid, { name }])) });
+  function defaultMap(seating){
+    const map = {};
+    Object.entries(DEFAULT_MAP).forEach(([sid, name]) => {
+      const t = seating.tables.find(t => normName(t.name) === normName(name));
+      if (t) map[sid] = t.id;
+    });
+    return map;
   }
 
   // Everything a page needs to show, in floor order: placed tables first, then the rest.
@@ -97,7 +113,7 @@ const FP = (() => {
   const b64u = bytes => { let s = ""; bytes.forEach(b => s += String.fromCharCode(b)); return btoa(s).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,""); };
   const unb64u = str => Uint8Array.from(atob(str.replace(/-/g,"+").replace(/_/g,"/")), c => c.charCodeAt(0));
   async function encode(dir){
-    const json = JSON.stringify({ v:1, t: dir.map(d => [d.sid || "", d.name, d.seats, d.guests.map(g => g.name)]) });
+    const json = JSON.stringify({ v:1, t: dir.map(d => [d.sid || "", d.name, d.seats, d.guests.map(g => g.pax === parsePax(g.name) ? g.name : [g.name, g.pax])]) });
     if (window.CompressionStream) {
       const stream = new Blob([json]).stream().pipeThrough(new CompressionStream("deflate-raw"));
       return "z=" + b64u(new Uint8Array(await new Response(stream).arrayBuffer()));
@@ -113,8 +129,8 @@ const FP = (() => {
     } else json = new TextDecoder().decode(unb64u(m[2]));
     const data = JSON.parse(json);
     return data.t.map(([sid, name, seats, names], i) => {
-      const guests = names.map(n => ({ name: n, pax: parsePax(n) }));
-      return { tid: "s" + i, sid: sid || null, name, seats, pax: guests.reduce((a,g) => a + g.pax, 0), guests };
+      const guests = names.map(n => Array.isArray(n) ? { name: n[0], pax: n[1] } : { name: n, pax: parsePax(n) });
+      return { tid: "s" + i, sid: sid === "15" ? "14" : sid || null, name, seats, pax: guests.reduce((a,g) => a + g.pax, 0), guests };
     });
   }
 
@@ -223,6 +239,6 @@ const FP = (() => {
     </g>`;
   }
 
-  return { SPOTS, SEAT_STORE, FP_STORE, spotLabel, normName, esc, parsePax, loadSeating, loadMap, saveMap, directory,
+  return { SPOTS, SEAT_STORE, FP_STORE, spotLabel, normName, esc, parsePax, loadSeating, loadMap, saveMap, defaultMap, directory,
            encode, decode, roomSVG, vendorsSVG, spotSVG };
 })();

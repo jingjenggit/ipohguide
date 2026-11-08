@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="floor-plan.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 .toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:0 28px 14px}
 .btn{border:1px solid var(--hatch);background:var(--sheet);padding:7px 14px;border-radius:999px;font-size:14px;transition:border-color .15s}
@@ -109,9 +110,11 @@ body.dragging,body.dragging *{cursor:grabbing!important}
 <div class="toolbar">
   <button class="btn" id="bUndo" title="Undo (Ctrl/⌘ Z)">Undo</button>
   <button class="btn" id="bClear">Clear floor plan</button>
+  <button class="btn" id="bDefault">Reset to default</button>
   <label class="toggle"><input type="checkbox" id="vendors" checked> Show vendors</label>
   <span class="spacer"></span>
   <button class="btn" id="bShare">Copy seat-finder link</button>
+  <button class="btn" id="bExport">Export to Excel</button>
   <button class="btn dark" id="bPrint">Print for venue</button>
 </div>
 
@@ -328,6 +331,30 @@ $("#bClear").onclick = () => {
   if (!Object.keys(map).length) return;
   if (!confirm("Move every table back to the list? You can undo this.")) return;
   commit(() => { map = {}; }); selSpot = null; render(); toast("Floor plan cleared");
+};
+$("#bDefault").onclick = () => {
+  if (!confirm("Replace the current floor plan with the default placement? You can undo this.")) return;
+  commit(() => { map = FP.defaultMap(seating); }); selSpot = null; render(); toast("Floor plan reset to default");
+};
+$("#bExport").onclick = () => {
+  if (!window.XLSX) return toast("Excel library didn't load. Check your internet connection.");
+  const byT = info(), dir = Object.values(byT);
+  const plan = [["Spot", "Table", "Guests (pax)", "Chairs"]];
+  SPOTS.forEach(s => {
+    const d = map[s.id] && byT[map[s.id]];
+    plan.push([s.id, d ? d.name : "", d ? d.pax : "", d ? d.seats : ""]);
+  });
+  dir.filter(d => !d.sid).forEach(d => plan.push(["Not placed", d.name, d.pax, d.seats]));
+  const guests = [["Spot", "Table", "Guest", "Pax"]];
+  dir.forEach(d => d.guests.forEach(g => guests.push([d.sid || "Not placed", d.name, g.name, g.pax])));
+  const ws1 = XLSX.utils.aoa_to_sheet(plan), ws2 = XLSX.utils.aoa_to_sheet(guests);
+  ws1["!cols"] = [{wch:11},{wch:24},{wch:13},{wch:8}];
+  ws2["!cols"] = [{wch:11},{wch:24},{wch:32},{wch:6}];
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws1, "Floor plan");
+  XLSX.utils.book_append_sheet(wb, ws2, "Guests by table");
+  XLSX.writeFile(wb, "Wedding - Floor plan.xlsx");
+  toast("Exported Wedding - Floor plan.xlsx");
 };
 $("#vendors").onchange = e => $("#plan").classList.toggle("no-vendors", !e.target.checked);
 $("#bPrint").onclick = () => { selSpot = selTable = null; render(); print(); };

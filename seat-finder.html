@@ -97,7 +97,7 @@ main{display:grid;grid-template-columns:380px minmax(0,1fr);gap:28px;padding:4px
 <script>
 const $ = s => document.querySelector(s);
 const { SPOTS, esc, spotLabel } = FP;
-const norm = s => String(s).toLowerCase().normalize("NFKD").replace(/[^a-z0-9 ]/g, "").replace(/\s+/g, " ").trim();
+const norm = s => String(s).toLowerCase().normalize("NFKD").replace(/\p{M}/gu, "").replace(/[^\p{L}\p{N} ]/gu, "").replace(/\s+/g, " ").trim();
 
 let dir = [], foundSid = null, foundGuest = null;
 $("#room").innerHTML = FP.roomSVG();
