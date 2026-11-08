@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Find Your Table</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="floor-plan.css">
+<style>
+body.guest .nav{display:none}
+main{display:grid;grid-template-columns:380px minmax(0,1fr);gap:28px;padding:4px 28px 48px;align-items:start}
+.finder{position:sticky;top:16px}
+.finder h2{font:600 46px/1 var(--serif);margin:0 0 8px;letter-spacing:-.3px}
+.finder .lede{margin:0 0 18px;color:var(--pencil);max-width:34ch}
+.q{display:block;width:100%;font:500 19px var(--sans);color:var(--graphite);background:var(--white);border:1.5px solid var(--graphite);border-radius:999px;padding:13px 22px}
+.q::placeholder{color:#9AA29B}
+.q:focus{outline:none;box-shadow:0 0 0 4px var(--brass-l);border-color:var(--brass)}
+.results{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-direction:column;gap:4px}
+.results button{width:100%;display:flex;justify-content:space-between;align-items:baseline;gap:12px;text-align:left;background:transparent;border:none;border-radius:8px;padding:9px 14px;font-size:16px}
+.results button:hover,.results button:focus-visible{background:var(--sheet)}
+.results span{color:var(--pencil);font-size:14px;white-space:nowrap}
+.results mark{background:var(--brass-l);color:inherit;border-radius:3px;padding:0 1px}
+.note{color:var(--pencil);margin:14px 4px 0;font-size:14px}
+
+.found{margin-top:22px;background:var(--sheet);border:1px solid var(--hatch);border-radius:6px;padding:22px 22px 20px}
+.found .seat{display:flex;align-items:center;gap:18px}
+.found svg{width:132px;height:132px;flex:none;overflow:visible}
+.found svg .chair{fill:var(--sage-m)}
+.found svg .chair.empty{fill:var(--white);stroke:var(--hatch)}
+.found svg .disc{fill:var(--sage)}
+.found svg text{font:600 42px var(--serif);font-variant-numeric:lining-nums;fill:var(--white);text-anchor:middle;dominant-baseline:central}
+.found svg text.vip{font-size:30px}
+.found .where{font:600 34px/1 var(--serif);font-variant-numeric:lining-nums;margin:0}
+.found .tname{margin:6px 0 0;color:var(--pencil);font-size:16px}
+.found h3{font:500 15px var(--sans);margin:20px 0 6px;color:var(--pencil)}
+.found ul{list-style:none;margin:0;padding:0;columns:2;column-gap:16px}
+.found li{padding:2px 0;break-inside:avoid}
+.found li.you{font-weight:600}
+
+.room-key{display:flex;flex-wrap:wrap;gap:6px 18px;margin:12px 2px 0;font-size:14px;color:var(--pencil)}
+.room-key i{display:inline-block;width:12px;height:12px;border-radius:3px;background:var(--orchid);margin-right:7px;vertical-align:-1px}
+
+.plan .spot{cursor:pointer}
+.plan .spot.dim{opacity:.32}
+.plan .spot.found-spot .halo{opacity:1;stroke-width:3;transform-box:fill-box;transform-origin:center;animation:ring 1.6s ease-out 3}
+@keyframes ring{0%{transform:scale(.85);opacity:1}70%{transform:scale(1.35);opacity:0}100%{transform:scale(1.35);opacity:0}}
+
+@media (max-width:980px){
+  main{grid-template-columns:minmax(0,1fr);padding:0 16px 40px;gap:20px}
+  .finder{position:static}
+  .finder h2{font-size:40px}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div>
+    <h1>Jing Long &amp; Ejean</h1>
+    <p class="sub">Wedding dinner, Sunday 22 November 2026</p>
+  </div>
+  <nav class="nav" aria-label="Wedding planning pages">
+    <a href="seating.html">Seating</a>
+    <a href="floor-plan.html">Floor plan</a>
+    <a href="seat-finder.html" aria-current="page">Seat finder</a>
+  </nav>
+</header>
+
+<main>
+  <section class="finder">
+    <h2>Find your table</h2>
+    <p class="lede">Type your name to see where you're sitting tonight.</p>
+    <input class="q" id="q" type="search" placeholder="Your name" autocomplete="off" aria-label="Your name" aria-controls="results">
+    <ul class="results" id="results"></ul>
+    <p class="note" id="note" hidden></p>
+    <div id="found"></div>
+  </section>
+
+  <section>
+    <div class="sheet">
+      <div class="sheet-scroll" id="scroller">
+        <svg class="plan" id="plan" viewBox="0 0 1180 660" role="img" aria-label="Banquet floor plan">
+          <g id="room"></g>
+          <g id="vendorLayer"></g>
+          <g id="spots"></g>
+        </svg>
+      </div>
+    </div>
+    <div class="room-key">
+      <span><i></i>Registration</span><span><i></i>Photo booth and gallery</span><span><i></i>Gelato</span>
+      <span><i></i>Pastries</span><span><i></i>Perfume station</span><span><i></i>Tea ceremony</span>
+    </div>
+  </section>
+</main>
+
+<script src="floor-plan-shared.js"></script>
+<script>
+const $ = s => document.querySelector(s);
+const { SPOTS, esc, spotLabel } = FP;
+const norm = s => String(s).toLowerCase().normalize("NFKD").replace(/[^a-z0-9 ]/g, "").replace(/\s+/g, " ").trim();
+
+let dir = [], foundSid = null, foundGuest = null;
+$("#room").innerHTML = FP.roomSVG();
+$("#vendorLayer").innerHTML = FP.vendorsSVG();
+
+function drawPlan(){
+  const bySpot = Object.fromEntries(dir.filter(d => d.sid).map(d => [d.sid, d]));
+  $("#spots").innerHTML = SPOTS.map(s =>
+    FP.spotSVG(s, bySpot[s.id], foundSid ? (s.id === foundSid ? "found-spot" : "dim") : "")).join("");
+}
+
+// A big drawing of the guest's own table
+function tableArt(d){
+  const n = d.seats, R = 50, r = 34;
+  let chairs = "";
+  for (let i = 0; i < n; i++){
+    const a = -Math.PI/2 + i * 2 * Math.PI / n;
+    chairs += `<rect class="chair${i < d.pax ? "" : " empty"}" x="-8" y="-6" width="16" height="12" rx="4"
+      transform="translate(${(R*Math.cos(a)).toFixed(1)} ${(R*Math.sin(a)).toFixed(1)}) rotate(${(a*180/Math.PI+90).toFixed(1)})"/>`;
+  }
+  return `<svg viewBox="-66 -66 132 132" aria-hidden="true">${chairs}<circle class="disc" r="${r}"/>
+    <text class="${d.sid === "VIP" ? "vip" : ""}" y="2">${d.sid}</text></svg>`;
+}
+
+function show(d, guestName){
+  foundSid = d.sid; foundGuest = guestName || null;
+  $("#found").innerHTML = `<div class="found">
+    <div class="seat">${d.sid ? tableArt(d) : ""}
+      <div><p class="where">${d.sid ? spotLabel(d.sid) : "Table not set yet"}</p><p class="tname">${esc(d.name)}</p></div></div>
+    <h3>${guestName ? "Sharing your table" : "Seated here"}</h3>
+    <ul>${d.guests.map(g => `<li class="${g.name === guestName ? "you" : ""}">${esc(g.name)}</li>`).join("")}</ul>
+  </div>`;
+  drawPlan();
+  // On narrow screens the plan scrolls sideways; bring the table into view
+  const el = d.sid && document.querySelector(`.spot[data-spot="${d.sid}"]`), sc = $("#scroller");
+  if (el && sc.scrollWidth > sc.clientWidth) {
+    const b = el.getBoundingClientRect(), h = sc.getBoundingClientRect();
+    sc.scrollBy({ left: b.left + b.width / 2 - (h.left + h.width / 2), behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+  }
+}
+
+function search(){
+  const q = norm($("#q").value), out = $("#results"), note = $("#note");
+  note.hidden = true;
+  if (!q) { out.innerHTML = ""; return; }
+  const hits = [];
+  dir.forEach(d => d.guests.forEach(g => { if (norm(g.name).includes(q)) hits.push({ d, g }); }));
+  out.innerHTML = hits.slice(0, 8).map((h, i) => {
+    const nm = esc(h.g.name), at = norm(h.g.name).indexOf(q);
+    // highlight the matched run when the normalised name lines up with the original
+    const label = norm(h.g.name) === h.g.name.toLowerCase() && at >= 0 ? nm.slice(0, at) + "<mark>" + nm.slice(at, at + q.length) + "</mark>" + nm.slice(at + q.length) : nm;
+    return `<li><button data-hit="${i}"><strong>${label}</strong><span>${h.d.sid ? spotLabel(h.d.sid) : "Not set yet"}</span></button></li>`;
+  }).join("");
+  out._hits = hits;
+  if (!hits.length) { note.hidden = false; note.textContent = "No guest by that name. Try part of your name, or ask at the registration table."; }
+  if (hits.length === 1) show(hits[0].d, hits[0].g.name);
+}
+
+$("#q").addEventListener("input", search);
+$("#q").addEventListener("keydown", e => {
+  if (e.key === "Enter") { const first = $("#results")._hits?.[0]; if (first) show(first.d, first.g.name); }
+  if (e.key === "ArrowDown") { const b = $("#results button"); if (b) { e.preventDefault(); b.focus(); } }
+});
+$("#results").addEventListener("click", e => {
+  const b = e.target.closest("[data-hit]"); if (!b) return;
+  const h = $("#results")._hits[+b.dataset.hit]; show(h.d, h.g.name);
+});
+$("#results").addEventListener("keydown", e => {
+  const items = [...document.querySelectorAll("#results button")], i = items.indexOf(document.activeElement);
+  if (e.key === "ArrowDown" && i < items.length - 1) { e.preventDefault(); items[i + 1].focus(); }
+  if (e.key === "ArrowUp") { e.preventDefault(); (i > 0 ? items[i - 1] : $("#q")).focus(); }
+});
+// Tapping a table on the plan shows who sits there
+function pickSpot(sid){
+  const d = dir.find(d => d.sid === sid); if (d) show(d);
+}
+$("#plan").addEventListener("click", e => { const s = e.target.closest(".spot"); if (s) pickSpot(s.dataset.spot); });
+$("#plan").addEventListener("keydown", e => {
+  const s = e.target.closest(".spot"); if (s && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); pickSpot(s.dataset.spot); }
+});
+
+(async () => {
+  if (location.hash.length > 3) {
+    document.body.classList.add("guest");
+    try { dir = await FP.decode(location.hash); } catch (_) { dir = []; }
+    if (!dir || !dir.length) { dir = []; $("#note").hidden = false; $("#note").textContent = "This link is incomplete. Ask the couple for a fresh one, or check at the registration table."; }
+  } else {
+    const seating = FP.loadSeating(false);
+    dir = FP.directory(seating, FP.loadMap(seating));
+    if (!dir.some(d => d.sid && d.sid !== "VIP")) { $("#note").hidden = false; $("#note").innerHTML = 'No tables are on the floor plan yet. <a href="floor-plan.html">Place them on the floor plan</a> first.'; }
+  }
+  drawPlan();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wedding Floor Plan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="floor-plan.css">
+<style>
+.toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:0 28px 14px}
+.btn{border:1px solid var(--hatch);background:var(--sheet);padding:7px 14px;border-radius:999px;font-size:14px;transition:border-color .15s}
+.btn:hover{border-color:var(--graphite)}
+.btn:disabled{opacity:.4;cursor:default;border-color:var(--hatch)}
+.btn.dark{background:var(--graphite);border-color:var(--graphite);color:var(--sheet)}
+.toggle{display:flex;align-items:center;gap:7px;font-size:14px;color:var(--graphite);padding:0 6px;cursor:pointer}
+.toggle input{accent-color:var(--orchid);width:16px;height:16px;margin:0}
+.spacer{flex:1}
+
+main{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:20px;padding:0 28px 48px;align-items:start}
+.stage{min-width:0}
+.legend{display:flex;flex-wrap:wrap;gap:6px 20px;margin:12px 2px 0;font-size:13px;color:var(--pencil)}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:7px;vertical-align:-1px}
+
+/* tray of escort cards */
+.tray{position:sticky;top:16px;max-height:calc(100vh - 32px);overflow:auto;background:var(--sheet);border:1px solid var(--hatch);border-radius:6px;padding:18px 16px 20px}
+.tray.drop-hot{border-color:var(--brass);box-shadow:inset 0 0 0 2px var(--brass-l)}
+.tray h2{font:600 22px/1.1 var(--serif);margin:0 0 2px;display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.tray h2 small{font:400 13px var(--sans);color:var(--pencil)}
+.tray .hint{color:var(--pencil);font-size:13px;margin:0 0 12px}
+.tray section+section{margin-top:22px}
+.list{display:flex;flex-direction:column;gap:6px}
+.card{display:grid;grid-template-columns:38px 1fr;align-items:center;gap:12px;width:100%;text-align:left;background:var(--white);border:1px solid var(--hatch);border-radius:6px;padding:8px 10px;touch-action:pan-y;transition:border-color .12s}
+.card:hover{border-color:var(--pencil)}
+.card.sel{border-color:var(--brass);box-shadow:inset 3px 0 0 var(--brass)}
+.card .mini{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font:600 16px var(--serif);font-variant-numeric:lining-nums;border:1.2px dashed var(--pencil);color:var(--pencil)}
+.card.placed .mini{background:var(--sage);border:none;color:var(--white)}
+.card.over .mini{background:var(--rose)}
+.card .cname{display:block;font:600 19px/1.15 var(--serif)}
+.card .cmeta{display:block;font-size:12.5px;color:var(--pencil)}
+.card.over .cmeta{color:var(--rose)}
+.empty-note{color:var(--pencil);font-size:13px;border:1px dashed var(--hatch);border-radius:6px;padding:14px;text-align:center;margin:0}
+
+/* selected-table detail */
+.detail{border-bottom:1px solid var(--hatch);padding-bottom:18px;margin-bottom:18px}
+.detail .dhead{display:flex;align-items:center;gap:14px}
+.detail .big{width:58px;height:58px;flex:none;border-radius:50%;background:var(--sage);color:var(--white);display:grid;place-items:center;font:600 26px var(--serif);font-variant-numeric:lining-nums;box-shadow:0 0 0 3px var(--sheet),0 0 0 5px var(--brass)}
+.detail .big.vip{font-size:20px}
+.detail .big.none{background:var(--sheet);color:var(--pencil);border:1.2px dashed var(--pencil)}
+.detail h3{font:600 24px/1.1 var(--serif);margin:0}
+.detail .dmeta{color:var(--pencil);font-size:13px;margin:2px 0 0}
+.detail .dmeta.over{color:var(--rose)}
+.detail ul{list-style:none;padding:0;margin:14px 0 12px;columns:2;column-gap:14px;font-size:14px}
+.detail li{break-inside:avoid;padding:2px 0}
+.detail li b{font-weight:500;color:var(--pencil);font-size:12px;margin-left:4px}
+.detail .acts{display:flex;flex-wrap:wrap;gap:8px}
+.detail a.btn{color:inherit;text-decoration:none}
+
+/* hover label + drag ghost */
+.tip{position:absolute;z-index:4;pointer-events:none;background:var(--graphite);color:var(--sheet);padding:6px 11px;border-radius:6px;font-size:13px;line-height:1.3;white-space:nowrap;transform:translate(-50%,calc(-100% - 10px));opacity:0;transition:opacity .12s}
+.tip.show{opacity:1}
+.tip b{display:block;font:600 17px var(--serif)}
+.ghost{position:fixed;z-index:30;pointer-events:none;display:flex;align-items:center;gap:8px;background:var(--graphite);color:var(--sheet);border-radius:999px;padding:5px 14px 5px 5px;font:600 16px var(--serif);transform:translate(-20px,-50%);box-shadow:0 8px 24px rgba(37,40,44,.25)}
+.ghost i{width:26px;height:26px;border-radius:50%;background:var(--sage)}
+body.dragging,body.dragging *{cursor:grabbing!important}
+
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,16px);background:var(--graphite);color:var(--sheet);padding:10px 18px;border-radius:999px;font-size:14px;opacity:0;transition:.2s;pointer-events:none;z-index:40}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+.printkey{display:none}
+
+@media (max-width:980px){
+  main{grid-template-columns:minmax(0,1fr);padding:0 16px 40px}
+  .toolbar{padding:0 16px 12px}
+  .tray{position:static;max-height:none}
+}
+
+/* venue sheet */
+@media print{
+  @page{size:A4 landscape;margin:10mm}
+  body{background:#fff}
+  .top .nav,.toolbar,.tray,.legend,.tip,.toast{display:none!important}
+  .top{padding:0 0 6px}
+  main{display:block;padding:0}
+  .sheet{border:none}
+  svg.plan{min-width:0}
+  .plan .spot .halo{display:none}
+  .printkey{display:block;break-before:page;columns:3;column-gap:8mm;font-size:10.5pt}
+  .printkey h2{column-span:all;font:600 20pt var(--serif);margin:0 0 4mm}
+  .printkey div{break-inside:avoid;margin-bottom:4mm}
+  .printkey h3{font:600 14pt var(--serif);font-variant-numeric:lining-nums;margin:0 0 1mm}
+  .printkey p{margin:0;color:#444}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div>
+    <h1>Jing Long &amp; Ejean</h1>
+    <p class="sub">Floor plan for Sunday, 22 November 2026</p>
+  </div>
+  <nav class="nav" aria-label="Wedding planning pages">
+    <a href="seating.html">Seating</a>
+    <a href="floor-plan.html" aria-current="page">Floor plan</a>
+    <a href="seat-finder.html">Seat finder</a>
+  </nav>
+</header>
+
+<div class="toolbar">
+  <button class="btn" id="bUndo" title="Undo (Ctrl/⌘ Z)">Undo</button>
+  <button class="btn" id="bClear">Clear floor plan</button>
+  <label class="toggle"><input type="checkbox" id="vendors" checked> Show vendors</label>
+  <span class="spacer"></span>
+  <button class="btn" id="bShare">Copy seat-finder link</button>
+  <button class="btn dark" id="bPrint">Print for venue</button>
+</div>
+
+<main>
+  <div class="stage">
+    <div class="sheet" id="sheet">
+      <div class="sheet-scroll">
+        <svg class="plan" id="plan" viewBox="0 0 1180 660" role="img" aria-label="Banquet floor plan">
+          <g id="room"></g>
+          <g id="vendorLayer"></g>
+          <g id="spots"></g>
+        </svg>
+      </div>
+      <div class="tip" id="tip"></div>
+    </div>
+    <div class="legend">
+      <span><i style="background:var(--sage)"></i>Table placed</span>
+      <span><i style="border:1.2px dashed var(--pencil)"></i>Open spot</span>
+      <span><i style="background:var(--rose)"></i>More guests than chairs</span>
+      <span><i style="background:var(--orchid)"></i>Vendor or station</span>
+    </div>
+  </div>
+
+  <aside class="tray" id="tray" aria-live="polite"></aside>
+</main>
+
+<section class="printkey" id="printkey"></section>
+<div class="toast" id="toast" role="status"></div>
+
+<script src="floor-plan-shared.js"></script>
+<script>
+const $ = s => document.querySelector(s);
+const { SPOTS, esc, spotLabel } = FP;
+
+let seating = FP.loadSeating();
+let map = FP.loadMap(seating);
+let selTable = null, selSpot = null, undoStack = [];
+
+const tableById = id => seating.tables.find(t => t.id === id);
+const spotOf = tid => Object.keys(map).find(k => map[k] === tid) || null;
+const info = () => Object.fromEntries(FP.directory(seating, map).map(d => [d.tid, d]));
+
+function commit(fn){
+  undoStack.push(JSON.stringify(map)); if (undoStack.length > 100) undoStack.shift();
+  fn(); FP.saveMap(map, seating); render();
+}
+function undo(){
+  if (!undoStack.length) return;
+  map = JSON.parse(undoStack.pop()); FP.saveMap(map, seating); render(); toast("Undone");
+}
+function assign(tid, sid){
+  if (map[sid] === tid) return;
+  const from = spotOf(tid), occupant = map[sid];
+  commit(() => {
+    if (from) delete map[from];
+    if (occupant && from) map[from] = occupant;     // swap places
+    map[sid] = tid;
+  });
+  const t = tableById(tid), o = occupant && tableById(occupant);
+  toast(o ? (from ? `Swapped ${t.name} with ${o.name}` : `${t.name} placed; ${o.name} is back in the list`) : `${t.name} placed at ${spotLabel(sid).toLowerCase()}`);
+}
+function unplace(tid){
+  const sid = spotOf(tid); if (!sid) return;
+  commit(() => delete map[sid]);
+  if (selSpot === sid) selSpot = null;
+  render();
+  toast(`${tableById(tid).name} moved back to the list`);
+}
+
+function toast(msg){ const t = $("#toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove("show"), 2000); }
+
+// ---------- render ----------
+$("#room").innerHTML = FP.roomSVG();
+$("#vendorLayer").innerHTML = FP.vendorsSVG();
+
+function cardHTML(d){
+  const over = d.pax > d.seats;
+  const meta = `${d.pax} guest${d.pax === 1 ? "" : "s"}, ${d.seats} chairs${over ? `, ${d.pax - d.seats} over` : ""}`;
+  return `<button class="card${d.sid ? " placed" : ""}${over ? " over" : ""}${selTable === d.tid ? " sel" : ""}" data-tid="${d.tid}" aria-pressed="${selTable === d.tid}">
+    <span class="mini">${d.sid || ""}</span>
+    <span><span class="cname">${esc(d.name)}</span><span class="cmeta">${meta}</span></span>
+  </button>`;
+}
+
+function detailHTML(){
+  if (!selSpot) return "";
+  const tid = map[selSpot], d = tid && info()[tid];
+  const vip = selSpot === "VIP" ? " vip" : "";
+  if (!d) return `<div class="detail"><div class="dhead"><span class="big none${vip}">${selSpot}</span>
+      <div><h3>${spotLabel(selSpot)} is open</h3><p class="dmeta">Choose a table below, then click this spot.</p></div></div></div>`;
+  const over = d.pax > d.seats;
+  return `<div class="detail"><div class="dhead"><span class="big${vip}">${selSpot}</span>
+      <div><h3>${esc(d.name)}</h3><p class="dmeta${over ? " over" : ""}">${spotLabel(selSpot)}, ${d.pax} of ${d.seats} chairs${over ? ` (${d.pax - d.seats} over)` : ""}</p></div></div>
+    <ul>${d.guests.map(g => `<li>${esc(g.name)}${g.pax > 1 ? `<b>${g.pax}</b>` : ""}</li>`).join("") || "<li>No guests yet</li>"}</ul>
+    <div class="acts"><button class="btn" data-unplace="${tid}">Move back to list</button><a class="btn" href="seating.html">Edit guests</a></div></div>`;
+}
+
+function render(){
+  const byT = info(), dir = Object.values(byT);
+  $("#spots").innerHTML = SPOTS.map(s => {
+    const d = map[s.id] && byT[map[s.id]];
+    return FP.spotSVG(s, d, [selSpot === s.id ? "sel" : "", selTable ? "target" : ""].join(" "));
+  }).join("");
+
+  const todo = dir.filter(d => !d.sid), done = dir.filter(d => d.sid);
+  const open = SPOTS.length - done.length;
+  $("#tray").innerHTML = detailHTML() + `
+    <section>
+      <h2>Tables to place <small>${todo.length} left, ${open} open spot${open === 1 ? "" : "s"}</small></h2>
+      ${todo.length ? `<p class="hint">Drag a table onto the plan, or click it and then click a spot.</p><div class="list">${todo.map(cardHTML).join("")}</div>`
+                    : `<p class="empty-note">Every table has a spot. Drag a table on the plan to move or swap it.</p>`}
+    </section>
+    <section>
+      <h2>On the floor <small>${done.length} placed</small></h2>
+      ${done.length ? `<div class="list">${done.map(cardHTML).join("")}</div>` : `<p class="empty-note">Nothing placed yet.</p>`}
+    </section>`;
+
+  $("#printkey").innerHTML = `<h2>Table key</h2>` + done.map(d =>
+    `<div><h3>${spotLabel(d.sid)}: ${esc(d.name)}</h3><p>${d.guests.map(g => esc(g.name)).join(", ")}</p></div>`).join("");
+
+  $("#bUndo").disabled = !undoStack.length;
+}
+
+// ---------- hover label ----------
+function showTip(el){
+  const sid = el.dataset.spot, tid = map[sid], tip = $("#tip");
+  if (!tid || drag) return tip.classList.remove("show");
+  const d = info()[tid], box = el.getBoundingClientRect(), host = $("#sheet").getBoundingClientRect();
+  tip.innerHTML = `<b>${esc(d.name)}</b>${spotLabel(sid)}, ${d.pax} of ${d.seats} chairs`;
+  tip.style.left = (box.left + box.width / 2 - host.left) + "px";
+  tip.style.top = (box.top - host.top) + "px";
+  tip.classList.add("show");
+}
+const hideTip = () => $("#tip").classList.remove("show");
+$("#plan").addEventListener("pointerover", e => { const s = e.target.closest(".spot"); s ? showTip(s) : hideTip(); });
+$("#plan").addEventListener("pointerleave", hideTip);
+$("#plan").addEventListener("focusin", e => { const s = e.target.closest(".spot"); if (s) showTip(s); });
+$("#plan").addEventListener("focusout", hideTip);
+
+// ---------- drag (mouse, pen and touch) ----------
+let drag = null, suppressClick = false;
+document.addEventListener("pointerdown", e => {
+  if (e.button !== 0) return;
+  const card = e.target.closest(".card"), spot = e.target.closest(".spot.filled");
+  const tid = card ? card.dataset.tid : spot ? map[spot.dataset.spot] : null;
+  if (tid) drag = { tid, x: e.clientX, y: e.clientY, on: false };
+});
+document.addEventListener("pointermove", e => {
+  if (!drag) return;
+  if (!drag.on) {
+    if (Math.hypot(e.clientX - drag.x, e.clientY - drag.y) < 6) return;
+    drag.on = true; hideTip();
+    drag.ghost = Object.assign(document.createElement("div"), { className: "ghost" });
+    drag.ghost.innerHTML = `<i></i>${esc(tableById(drag.tid).name)}`;
+    document.body.append(drag.ghost); document.body.classList.add("dragging");
+  }
+  e.preventDefault();
+  drag.ghost.style.left = e.clientX + "px"; drag.ghost.style.top = e.clientY + "px";
+  const under = document.elementFromPoint(e.clientX, e.clientY);
+  const spot = under && under.closest(".spot"), tray = under && under.closest(".tray");
+  document.querySelectorAll(".spot.hot").forEach(s => s !== spot && s.classList.remove("hot"));
+  if (spot) spot.classList.add("hot");
+  $("#tray").classList.toggle("drop-hot", !!tray && !!spotOf(drag.tid));
+  drag.target = spot ? spot.dataset.spot : tray ? "tray" : null;
+});
+function endDrag(e){
+  if (!drag) return;
+  const d = drag; drag = null;
+  if (!d.on) return;
+  d.ghost.remove(); document.body.classList.remove("dragging"); $("#tray").classList.remove("drop-hot");
+  suppressClick = true; setTimeout(() => suppressClick = false, 0);
+  if (e.type === "pointercancel") return render();
+  selTable = null;
+  if (d.target === "tray") unplace(d.tid);
+  else if (d.target) { selSpot = d.target; assign(d.tid, d.target); }
+  else render();
+}
+document.addEventListener("pointerup", endDrag);
+document.addEventListener("pointercancel", endDrag);
+document.addEventListener("dragstart", e => { if (e.target.closest?.(".card, .spot")) e.preventDefault(); });
+
+// ---------- clicks & keys ----------
+function pickSpot(sid){
+  if (selTable) { const t = selTable; selTable = null; selSpot = sid; assign(t, sid); return; }
+  selSpot = selSpot === sid ? null : sid; render();
+}
+document.addEventListener("click", e => {
+  if (suppressClick) return;
+  const un = e.target.closest("[data-unplace]"); if (un) return unplace(un.dataset.unplace);
+  const card = e.target.closest(".card");
+  if (card) {
+    const tid = card.dataset.tid, sid = spotOf(tid);
+    if (sid) { selTable = selTable === tid ? null : tid; selSpot = sid; }   // placed: show it, and allow moving by clicking a new spot
+    else selTable = selTable === tid ? null : tid;
+    render();
+    const again = document.querySelector(`.card[data-tid="${tid}"]`); if (again) again.focus();
+    return;
+  }
+  const spot = e.target.closest(".spot"); if (spot) return pickSpot(spot.dataset.spot);
+});
+document.addEventListener("keydown", e => {
+  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "z") { e.preventDefault(); return undo(); }
+  if (e.key === "Escape" && (selTable || selSpot)) { selTable = selSpot = null; render(); }
+  const spot = e.target.closest?.(".spot");
+  if (spot && (e.key === "Enter" || e.key === " ")) {
+    e.preventDefault(); const sid = spot.dataset.spot; pickSpot(sid);
+    const again = document.querySelector(`.spot[data-spot="${sid}"]`); if (again) again.focus();
+  }
+});
+
+// ---------- toolbar ----------
+$("#bUndo").onclick = undo;
+$("#bClear").onclick = () => {
+  if (!Object.keys(map).length) return;
+  if (!confirm("Move every table back to the list? You can undo this.")) return;
+  commit(() => { map = {}; }); selSpot = null; render(); toast("Floor plan cleared");
+};
+$("#vendors").onchange = e => $("#plan").classList.toggle("no-vendors", !e.target.checked);
+$("#bPrint").onclick = () => { selSpot = selTable = null; render(); print(); };
+$("#bShare").onclick = async () => {
+  const hash = await FP.encode(FP.directory(seating, map));
+  const url = new URL("seat-finder.html", location.href); url.hash = hash;
+  try { await navigator.clipboard.writeText(url.href); toast("Seat-finder link copied, with the current plan"); }
+  catch (_) { prompt("Copy this seat-finder link:", url.href); }
+};
+
+// Stay in step with seating.html open in another tab
+addEventListener("storage", e => {
+  if (e.key !== FP.SEAT_STORE && e.key !== FP.FP_STORE) return;
+  seating = FP.loadSeating(); map = FP.loadMap(seating); render();
+});
+
+FP.saveMap(map, seating);
+render();
+</script>
+</body>
+</html>

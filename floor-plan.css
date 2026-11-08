@@ -1,0 +1,73 @@
+/* Shared by floor-plan.html and seat-finder.html */
+:root{
+  color-scheme: light;
+  --vellum:#E9ECE6; --sheet:#F8F9F5; --white:#FFFFFF;
+  --graphite:#25282C; --pencil:#737C74; --hatch:#C9CFC6; --gridline:#E3E7E0;
+  --sage:#4E6A56; --sage-m:#9DB3A2; --sage-l:#DCE5DC;
+  --brass:#A9843F; --brass-l:#EFE4CC;
+  --orchid:#953C87; --orchid-l:#F3E3EF;
+  --rose:#B4513F;
+  --serif:"Cormorant Garamond", Georgia, "Times New Roman", serif;
+  --sans:"Jost", -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--vellum);color:var(--graphite);font:15px/1.5 var(--sans);font-variant-numeric:lining-nums}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+
+/* masthead */
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;gap:10px 28px;padding:24px 28px 16px}
+.top h1{font:600 32px/1 var(--serif);margin:0;letter-spacing:.2px}
+.top .sub{margin:6px 0 0;color:var(--pencil)}
+.nav{margin-left:auto;display:flex;gap:2px;background:var(--sheet);border:1px solid var(--hatch);border-radius:999px;padding:3px}
+.nav a{color:var(--graphite);text-decoration:none;padding:6px 14px;border-radius:999px;font-size:14px;white-space:nowrap}
+.nav a[aria-current]{background:var(--graphite);color:var(--sheet)}
+.nav a:hover:not([aria-current]){background:var(--vellum)}
+
+/* the drawing */
+.sheet{position:relative;background:var(--sheet);border:1px solid var(--hatch);border-radius:6px}
+.sheet-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:6px}
+svg.plan{display:block;width:100%;height:auto;min-width:720px;user-select:none;-webkit-user-select:none}
+.plan .gridline{fill:none;stroke:var(--gridline);stroke-width:1}
+.plan .wall{fill:none;stroke:var(--graphite);stroke-width:5.5;stroke-linejoin:round;stroke-linecap:square}
+.plan .wall-in{fill:none;stroke:var(--sheet);stroke-width:1.6;stroke-linejoin:round}
+.plan .thin{fill:none;stroke:var(--graphite);stroke-width:1.3}
+.plan .thick{fill:var(--sheet);stroke:var(--graphite);stroke-width:4}
+.plan .fine{fill:none;stroke:var(--pencil);stroke-width:.9}
+.plan .dash{fill:none;stroke:var(--pencil);stroke-width:1;stroke-dasharray:4 3}
+.plan .col{fill:var(--graphite)}
+.plan .colo{fill:var(--sheet);stroke:var(--graphite);stroke-width:1.3}
+.plan .ann{font:400 11px var(--sans);fill:var(--pencil)}
+.plan .carpet{fill:var(--white);stroke:var(--hatch);stroke-width:1.2}
+.plan .carpet-t{font:italic 500 17px var(--serif);fill:var(--pencil)}
+.plan .title-date{font:600 26px var(--serif);font-variant-numeric:lining-nums;fill:var(--graphite)}
+
+.plan .vendor .v-shape{fill:var(--orchid-l);stroke:var(--orchid);stroke-width:1.5}
+.plan .vendor .v-solid{fill:var(--orchid)}
+.plan .vendor .v-text{font:500 12px var(--sans);fill:var(--orchid)}
+.plan .vendor .chev{fill:none;stroke:var(--orchid);stroke-width:9}
+.plan.no-vendors .vendor{display:none}
+
+.plan .spot{cursor:pointer;outline:none}
+.plan .spot .hit{fill:transparent}
+.plan .spot .halo{fill:none;stroke:var(--brass);stroke-width:2.5;opacity:0;transition:opacity .15s}
+.plan .spot .chair{fill:var(--white);stroke:var(--hatch);stroke-width:1}
+.plan .spot .disc{fill:var(--sheet);stroke:var(--pencil);stroke-width:1.2;stroke-dasharray:3 3}
+.plan .spot .num{font:600 19px var(--serif);font-variant-numeric:lining-nums;fill:var(--pencil);text-anchor:middle;dominant-baseline:central;pointer-events:none}
+.plan .spot .num.vip{font-size:17px;letter-spacing:.5px}
+.plan .spot.filled .disc{fill:var(--sage);stroke:var(--sage);stroke-dasharray:none}
+.plan .spot.filled .num{fill:var(--white)}
+.plan .spot.filled .chair.on{fill:var(--sage-m);stroke:none}
+.plan .spot .chair.over{fill:var(--rose);stroke:none}
+.plan .spot.over .disc{fill:var(--rose);stroke:var(--rose)}
+.plan .spot:hover .halo,.plan .spot:focus-visible .halo{opacity:.45}
+.plan .spot.sel .halo,.plan .spot.hot .halo{opacity:1}
+.plan .spot.sel .disc{stroke:var(--brass);stroke-width:3}
+
+@media (max-width:720px){
+  .top{padding:18px 16px 12px}
+  .top h1{font-size:27px}
+  .nav{margin-left:0}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
