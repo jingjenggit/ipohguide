@@ -206,12 +206,10 @@ const FP = (() => {
       <path class="chev" d="M760 290L812 358L760 426"/>
       <text class="v-text" transform="translate(767 358) rotate(90)" text-anchor="middle">Photo booth</text>
       <text class="v-text" transform="translate(836 358) rotate(90)" text-anchor="middle">Gallery area</text>
-      <rect class="v-solid" x="1110" y="280" width="8" height="76"/>
-      <text class="v-text" transform="translate(1096 318) rotate(90)" text-anchor="middle">Tea ceremony backdrop</text>
-      <rect class="v-shape" x="885" y="365" width="125" height="40" rx="6"/>
-      <text class="v-text" x="947" y="389" text-anchor="middle">Pastries</text>
-      <ellipse class="v-shape" cx="800" cy="464" rx="46" ry="18"/>
-      <text class="v-text" x="800" y="468" text-anchor="middle">Gelato</text>
+      <rect class="v-shape" x="1082" y="268" width="36" height="110" rx="6"/>
+      <text class="v-text" transform="translate(1100 323) rotate(90)" text-anchor="middle" dominant-baseline="central">Pastries</text>
+      <ellipse class="v-shape" cx="947" cy="385" rx="50" ry="19"/>
+      <text class="v-text" x="947" y="389" text-anchor="middle">Gelato</text>
       <rect class="v-shape" x="545" y="452" width="125" height="40" rx="6"/>
       <text class="v-text" x="607" y="476" text-anchor="middle">Perfume station</text>
     </g>`;

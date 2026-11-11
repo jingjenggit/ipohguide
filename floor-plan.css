@@ -44,7 +44,6 @@ svg.plan{display:block;width:100%;height:auto;min-width:720px;user-select:none;-
 .plan .title-date{font:600 26px var(--serif);font-variant-numeric:lining-nums;fill:var(--graphite)}
 
 .plan .vendor .v-shape{fill:var(--orchid-l);stroke:var(--orchid);stroke-width:1.5}
-.plan .vendor .v-solid{fill:var(--orchid)}
 .plan .vendor .v-text{font:500 12px var(--sans);fill:var(--orchid)}
 .plan .vendor .chev{fill:none;stroke:var(--orchid);stroke-width:9}
 .plan.no-vendors .vendor{display:none}
