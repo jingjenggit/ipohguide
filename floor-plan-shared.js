@@ -5,21 +5,22 @@ const FP = (() => {
   const SEAT_STORE = "wedding-seating-v1", FP_STORE = "wedding-floorplan-v1", MAX_SEATS = 12;
 
   // Copy of the base sheet in seating.html — only used when this device has no saved seating plan yet.
-  const SEED = [{"name": "Ejean's Family 6", "guests": ["Er gu", "Guzhang", "Chee kit", "Chee Kit's wife", "Chee Kit's Daughter x2", "Chee Hou", "Chee Hou's wife", "Joo Peng", "Chee Kang"], "seats": 10}, {"name": "Ejean's Family 5", "guests": ["Grandpa", "Grandma", "Yiyi", "Yizhang", "Yun Wei", "Kent If", "Cuebee", "Cue Bee's Son x2", "Ying ying", "Popo's sister (Unconfirmed)"], "seats": 11}, {"name": "Ejean's Family 4", "guests": ["Da jiu", "Yong yong", "Jeff's Mom", "Sam suk po", "Ah yong", "Ah yong's wife", "Ah Yong's Son", "Fong Yi", "Fong Yi's Husband", "Fong Yi's Son"], "seats": 10}, {"name": "Ejean's Family 3", "guests": ["Winnie", "Winnie's Husband", "Winnie's 4x children", "Li Shyun", "Li Shyun's 2x children"], "seats": 10}, {"name": "Ejean's Family 2", "guests": ["Fifth grandaunt", "Fifth grandaunt's husband", "Sixth grandaunt", "Sixth grandaunt's husband", "Sixth grandaunt's Son", "Sixth grandaunt's Daughter In Law", "Sixth grandaunt's Son", "Seventh grandaunt", "Seventh grandaunt' husband", "Jun", "Jun's wife", "Jun's child"], "seats": 12}, {"name": "Ejean's Family 1", "guests": ["Xiao gu", "Xiao Gu's Youngest daughter", "Xiao Gu Youngest daughter's husband", "Xiao Gu's Youngest daughter baby", "Da gu", "Da gu husband", "Ba mei", "Suk Mei"], "seats": 10}, {"name": "Mom's friends", "guests": ["Mom's friends x10"], "seats": 10}, {"name": "Mama & Dedey", "guests": ["Mama friends x8", "Mama", "Dedey", "Kelly"], "seats": 11}, {"name": "Friends", "guests": ["Catherine", "You Soon", "Sharmaine", "Wei Xiang", "Chloe", "Chloe's Partner", "Man Teng", "Jing Xuan", "Wen Di", "Pui San"], "seats": 10}, {"name": "Colleagues", "guests": ["Agnes", "Zhi Ying", "Zhao tian", "Sengja", "Hsao Kham", "Htay Htay", "Evelyne", "Stanley", "Brandon"], "seats": 10}, {"name": "Ballet table", "guests": ["Ying Yi", "Pui Yee", "Pui Yee's Husband", "Teacher", "Ballet girls 8x"], "seats": 12}, {"name": "JL's Family 1", "guests": ["Bheng Lim", "Meini", "Bheng lim's 4x children", "Bheng Siang", {"name": "Bheng Siang's children", "pax": 2}, "Bheng liang", "Jun", "Chiu Yan"], "seats": 12}, {"name": "VIP Table", "guests": ["Jing Long", "Ejean", "Jing Long's Mother", "Jing Long's Father", "Ejean's Mom", "Jeffrey (Didi)", "Ejean's 婆婆", "Jing long's 姑姑", "Shiow Han", "Guo Xuan"], "seats": 10}, {"name": "JL Family 2", "guests": ["Shiow Han's Mom", "Shiow Han's Dad", "Aunt Jacqueline (四姨）", "Aunt Carol (三姨）", "Uncle Wei Yong (舅舅)", "Aunt Audrey (大姨）", "Jing Xian", "Jing Kai", "Jing Wei", "Shiow Han's Brother"], "seats": 10}];
+  const SEED = [{"name": "Ejean's Family 6", "guests": ["Lew Siew Fong (二姑）", "Fong Guzhang (姑丈）", "Chee kit", "Chee Kit's wife", "Chee Kit's Daughter x2", "Chee Hou", "Chee Hou's wife", "Joo Peng", "Chee Kang"], "seats": 10}, {"name": "Ejean's Family 5", "guests": ["Grandpa", "Grandma", "Kent If", "Ying ying", "Grandma's sister", {"name": "GrandMa Sister Family", "pax": 3}, "Leong Kent Dat", "Yong yong"], "seats": 10}, {"name": "Ejean's Family 4", "guests": ["Leong Cue Bee", "Tan Kak Boon", "Cue Bee's Son x2", "Tan Yun Wei", "Leong Choy Hoong", "Leong Kah Foong", "Leong Kah Foong's Husband", "Leong Kah Foong's Son", "Kelly"], "seats": 10}, {"name": "Ejean's Family 3", "guests": ["Winnie", "Winnie's Husband", "Winnie's 4x children", "Sam suk po (三叔婆）", "Li Shyun", "Li Shyun's 2x children"], "seats": 10}, {"name": "Ejean's Family 2", "guests": ["Leong Yit Heng (六姑婆）", "Yit Heng's husband", {"name": "Yit Heng's Sons", "pax": 2}, "Jeff's Mom (大伯婆）", "Seventh grandaunt（七姑婆）", "Seventh grandaunt' husband", "Jun", "Jun's wife", "Jun's child"], "seats": 10}, {"name": "Ejean's Family 1", "guests": ["Lew Siew Kuan (小姑）", "Siew Kuan's daughter", "Siew Kuan daughter's husband", "Xiao Gu's Youngest daughter baby", "Shirley Lew (大姑）", "Shirley Lew's husband", "Ba mei (伯么）", "Suk Mei （叔么）"], "seats": 8}, {"name": "Mom's friends", "guests": ["Mom's friends x10"], "seats": 10}, {"name": "Mama & Dedey", "guests": ["Leong Yit Wah (五姑婆）", "Mama's Friend ('哥哥'）", "Mama Sister's son", "Mama Sister", "Mama", "Dedey", "Leong Yit Wah's husband", "Leong Wai Yong", "Leong Wai Yong's Son", "Leong Wai Yong's Wife"], "seats": 10}, {"name": "Friends", "guests": ["Catherine", "You Soon", "Sharmaine", "Wei Xiang", "Chloe", "Chloe's Partner", "Man Teng", "Wen Di", "Pui San"], "seats": 9}, {"name": "Colleagues", "guests": ["Agnas", "Zhi Ying", "Zhao tian", "Sengja", "Hsao Kham", "Htay Htay", "Evelyne", "Stanley", "Brandon"], "seats": 9}, {"name": "Ballet table", "guests": ["Ying Yi", "Pui Yee", "Pui Yee's Husband", "Teacher", "Ballet girls 4x"], "seats": 8}, {"name": "JL's Family 1", "guests": ["Bheng Lim", "Meini", "Bheng lim's 4x children", "Bheng Siang", {"name": "Bheng Siang's children", "pax": 2}, "Bheng liang", "Jun", "Chiu Yan"], "seats": 12}, {"name": "VIP Table", "guests": ["Jing Long", "Ejean", "Jing Long's Mother", "Jing Long's Father", "Ejean's Mom", "Jeffrey (Didi)", "Ejean's 婆婆", "Jing long's 姑姑", "Shiow Han", "Guo Xuan"], "seats": 10}, {"name": "JL Family 2", "guests": ["Shiow Han's Mom", "Shiow Han's Dad", "Aunt Jacqueline (四姨）", "Aunt Carol (三姨）", "Uncle Wei Yong (舅舅)", "Aunt Audrey (大姨）", "Jing Xian", "Jing Kai", "Jing Wei", "Shiow Han's Brother"], "seats": 10}, {"name": "Mama's Friends", "guests": [{"name": "Mama's Friends", "pax": 4}, {"name": "Grandma's Friends", "pax": 3}, "Gigi (Mom's friend)", "Gigi's daughter", "Ah Kuan"], "seats": 10}];
   const SEED_SIG = JSON.stringify(SEED).length + ":" + [...JSON.stringify(SEED)].reduce((h,c) => (h*31 + c.charCodeAt(0)) >>> 0, 7);
 
-  // Table spots, traced from the venue drawing dated 22 Nov 2026 (the drawing labels the last one 15; it is table 14).
+  // Table spots, traced from the venue drawing dated 22 Nov 2026.
   const SPOTS = [
     {id:"VIP", x:198, y:303, big:true},
     {id:"1", x:400, y:62}, {id:"2", x:322, y:58}, {id:"3", x:233, y:58}, {id:"5", x:150, y:100},
     {id:"6", x:233, y:138}, {id:"7", x:320, y:138}, {id:"8", x:400, y:135},
     {id:"9", x:403, y:465}, {id:"10", x:322, y:472}, {id:"11", x:230, y:490},
-    {id:"12", x:229, y:575}, {id:"13", x:325, y:560}, {id:"14", x:407, y:543},
+    {id:"12", x:229, y:575}, {id:"13", x:325, y:560}, {id:"15", x:407, y:543},
+    {id:"16", x:490, y:504},
   ];
   // Default placement: spot → table name (as named in the seating plan).
   // To update it, export the floor plan to Excel and use its "Floor plan" sheet.
-  // From "Wedding - Floor plan 8 nov.xlsx".
-  const DEFAULT_MAP = {"VIP": "VIP Table", "1": "Ballet table", "2": "Mom's friends", "3": "Mama & Dedey", "5": "Colleagues", "6": "JL's Family 1", "7": "JL Family 2", "8": "Friends", "9": "Ejean's Family 4", "10": "Ejean's Family 5", "11": "Ejean's Family 6", "12": "Ejean's Family 2", "13": "Ejean's Family 3", "14": "Ejean's Family 1"};
+  // From "Wedding - Table arrangement (16 Nov 1517pm).xlsx".
+  const DEFAULT_MAP = {"VIP": "VIP Table", "1": "Ballet table", "2": "Mom's friends", "3": "Mama & Dedey", "5": "Colleagues", "6": "JL's Family 1", "7": "JL Family 2", "8": "Friends", "9": "Ejean's Family 4", "10": "Ejean's Family 5", "11": "Ejean's Family 6", "12": "Ejean's Family 2", "13": "Ejean's Family 3", "15": "Ejean's Family 1", "16": "Mama's Friends"};
   const DEFAULT_SIG = JSON.stringify(DEFAULT_MAP);
   const spotLabel = id => id === "VIP" ? "VIP table" : "Table " + id;
 
@@ -72,7 +73,6 @@ const FP = (() => {
     if (!raw || !raw.spots || (raw.defaultSig !== undefined && raw.defaultSig !== DEFAULT_SIG)) raw = defaultRaw();
     const map = {}, used = new Set();
     Object.entries(raw.spots).forEach(([sid, ref]) => {
-      if (sid === "15") sid = "14";   // spot was called 15 before 8 Nov
       if (!SPOTS.some(s => s.id === sid) || !ref) return;
       const t = seating.tables.find(t => t.id === ref.id) || seating.tables.find(t => normName(t.name) === normName(ref.name));
       if (t && !used.has(t.id)) { map[sid] = t.id; used.add(t.id); }
@@ -130,7 +130,7 @@ const FP = (() => {
     const data = JSON.parse(json);
     return data.t.map(([sid, name, seats, names], i) => {
       const guests = names.map(n => Array.isArray(n) ? { name: n[0], pax: n[1] } : { name: n, pax: parsePax(n) });
-      return { tid: "s" + i, sid: sid === "15" ? "14" : sid || null, name, seats, pax: guests.reduce((a,g) => a + g.pax, 0), guests };
+      return { tid: "s" + i, sid: sid || null, name, seats, pax: guests.reduce((a,g) => a + g.pax, 0), guests };
     });
   }
 
