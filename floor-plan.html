@@ -233,7 +233,7 @@ function render(){
     </section>`;
 
   $("#printkey").innerHTML = `<h2>Table key</h2>` + done.map(d =>
-    `<div><h3>${spotLabel(d.sid)}: ${esc(d.name)}</h3><p>${d.guests.map(g => esc(g.name)).join(", ")}</p></div>`).join("");
+    `<div><h3>${spotLabel(d.sid)}</h3><p>${d.guests.map(g => esc(g.name) + (g.pax > 1 ? ` (${g.pax})` : "")).join("<br>")}</p></div>`).join("");
 
   $("#bUndo").disabled = !undoStack.length;
 }
@@ -339,17 +339,21 @@ $("#bDefault").onclick = () => {
 $("#bExport").onclick = () => {
   if (!window.XLSX) return toast("Excel library didn't load. Check your internet connection.");
   const byT = info(), dir = Object.values(byT);
-  const plan = [["Spot", "Table", "Guests (pax)", "Chairs"]];
+  const plan = [["Table", "Guests (pax)", "Chairs"]];
   SPOTS.forEach(s => {
     const d = map[s.id] && byT[map[s.id]];
-    plan.push([s.id, d ? d.name : "", d ? d.pax : "", d ? d.seats : ""]);
+    plan.push([spotLabel(s.id), d ? d.pax : "", d ? d.seats : ""]);
   });
-  dir.filter(d => !d.sid).forEach(d => plan.push(["Not placed", d.name, d.pax, d.seats]));
-  const guests = [["Spot", "Table", "Guest", "Pax"]];
-  dir.forEach(d => d.guests.forEach(g => guests.push([d.sid || "Not placed", d.name, g.name, g.pax])));
+  dir.filter(d => !d.sid).forEach(d => plan.push(["Not placed", d.pax, d.seats]));
+  const guests = [];
+  dir.forEach(d => {
+    guests.push([d.sid ? spotLabel(d.sid) : "Not placed"]);
+    d.guests.forEach(g => guests.push(["", g.name, g.pax > 1 ? g.pax : ""]));
+    guests.push([]);
+  });
   const ws1 = XLSX.utils.aoa_to_sheet(plan), ws2 = XLSX.utils.aoa_to_sheet(guests);
-  ws1["!cols"] = [{wch:11},{wch:24},{wch:13},{wch:8}];
-  ws2["!cols"] = [{wch:11},{wch:24},{wch:32},{wch:6}];
+  ws1["!cols"] = [{wch:14},{wch:13},{wch:8}];
+  ws2["!cols"] = [{wch:14},{wch:32},{wch:6}];
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws1, "Floor plan");
   XLSX.utils.book_append_sheet(wb, ws2, "Guests by table");
