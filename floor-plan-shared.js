@@ -19,8 +19,8 @@ const FP = (() => {
   ];
   // Default placement: spot → table name (as named in the seating plan).
   // To update it, export the floor plan to Excel and use its "Floor plan" sheet.
-  // From "Wedding - Table arrangement (16 Nov 1517pm).xlsx".
-  const DEFAULT_MAP = {"VIP": "VIP Table", "1": "Ballet table", "2": "Mom's friends", "3": "Mama & Dedey", "5": "Colleagues", "6": "JL's Family 1", "7": "JL Family 2", "8": "Friends", "9": "Ejean's Family 4", "10": "Ejean's Family 5", "11": "Ejean's Family 6", "12": "Ejean's Family 2", "13": "Ejean's Family 3", "15": "Ejean's Family 1", "16": "Mama's Friends"};
+  // From "Wedding - Floor plan (16 Nov 2157pm).xlsx".
+  const DEFAULT_MAP = {"VIP": "VIP Table", "1": "Mama's Friends", "2": "Ejean's Family 3", "3": "Mama & Dedey", "5": "Ejean's Family 2", "6": "Ejean's Family 5", "7": "Ejean's Family 4", "8": "Colleagues", "9": "Friends", "10": "Ejean's Family 6", "11": "JL Family 2", "12": "JL's Family 1", "13": "Mom's friends", "15": "Ejean's Family 1", "16": "Ballet table"};
   const DEFAULT_SIG = JSON.stringify(DEFAULT_MAP);
   const spotLabel = id => id === "VIP" ? "VIP table" : "Table " + id;
 
